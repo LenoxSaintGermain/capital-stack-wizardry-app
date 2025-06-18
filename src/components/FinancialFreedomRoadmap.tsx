@@ -1,11 +1,11 @@
-
 import React, { useState, useMemo } from 'react';
-import { TrendingUp, Calendar, DollarSign, Home, Plane, Trophy, Building2, MapPin, Target, Clock, Rocket } from 'lucide-react';
+import { TrendingUp, Calendar, DollarSign, Home, Plane, Trophy, Building2, MapPin, Target, Clock, Rocket, Settings, User } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, BarChart as RechartsBarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import PersonalProfileForm, { PersonalProfile } from './PersonalProfileForm';
 
 const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('en-US', {
@@ -29,6 +29,126 @@ interface LifestyleMilestone {
 const FinancialFreedomRoadmap: React.FC = () => {
   const [selectedScenario, setSelectedScenario] = useState<'conservative' | 'base' | 'aggressive'>('base');
   const [viewMode, setViewMode] = useState<'lifestyle' | 'portfolio' | 'wealth'>('lifestyle');
+  const [showPersonalForm, setShowPersonalForm] = useState(false);
+  const [isPersonalized, setIsPersonalized] = useState(false);
+
+  // Default profile (your scenario)
+  const [personalProfile, setPersonalProfile] = useState<PersonalProfile>({
+    currentIncome: 75000,
+    investmentAmount: 50000,
+    targetMonthlyIncome: 6250,
+    riskTolerance: 'moderate',
+    timeline: 3,
+    location: 'Raleigh, NC',
+    situation: 'single',
+    age: 32
+  });
+
+  // Dynamic scenario mapping based on profile
+  const getScenarioFromProfile = (profile: PersonalProfile) => {
+    if (profile.riskTolerance === 'aggressive') return 'aggressive';
+    if (profile.riskTolerance === 'conservative') return 'conservative';
+    return 'base';
+  };
+
+  // Base case monthly distributions adapted to personal profile
+  const monthlyDistributions = useMemo(() => {
+    const scenarios = {
+      conservative: { y1: 15000, y2: 22000, y3: 30000 },
+      base: { y1: 20000, y2: 30000, y3: 42000 },
+      aggressive: { y1: 28000, y2: 40000, y3: 58000 },
+    };
+    
+    const currentScenario = isPersonalized ? getScenarioFromProfile(personalProfile) : selectedScenario;
+    const scenario = scenarios[currentScenario];
+    
+    // Scale based on investment amount (base is $50k)
+    const investmentMultiplier = personalProfile.investmentAmount / 50000;
+    const timelineMultiplier = 3 / personalProfile.timeline; // Compress/extend timeline
+    
+    const data = [];
+    const totalMonths = personalProfile.timeline * 12;
+    
+    for (let month = 1; month <= Math.min(totalMonths, 36); month++) {
+      let monthlyIncome;
+      const adjustedMonth = month * timelineMultiplier;
+      
+      if (adjustedMonth <= 12) {
+        monthlyIncome = scenario.y1 * (adjustedMonth / 12) * investmentMultiplier;
+      } else if (adjustedMonth <= 24) {
+        monthlyIncome = (scenario.y1 + (scenario.y2 - scenario.y1) * ((adjustedMonth - 12) / 12)) * investmentMultiplier;
+      } else {
+        monthlyIncome = (scenario.y2 + (scenario.y3 - scenario.y2) * ((adjustedMonth - 24) / 12)) * investmentMultiplier;
+      }
+      
+      data.push({
+        month,
+        monthlyIncome: Math.round(monthlyIncome),
+        cumulativeIncome: data.length > 0 ? data[data.length - 1].cumulativeIncome + Math.round(monthlyIncome) : Math.round(monthlyIncome),
+        portfolioValue: Math.round(monthlyIncome * 12 * 5),
+      });
+    }
+    
+    return data;
+  }, [selectedScenario, personalProfile, isPersonalized]);
+
+  // Dynamic lifestyle milestones based on personal profile
+  const lifestyleMilestones: LifestyleMilestone[] = useMemo(() => {
+    const baseIncome = personalProfile.currentIncome / 12;
+    const targetIncome = personalProfile.targetMonthlyIncome;
+    const situationMultiplier = personalProfile.situation === 'family' ? 1.5 : personalProfile.situation === 'married' ? 1.2 : 1;
+    
+    return [
+      {
+        month: Math.round(3 * (3 / personalProfile.timeline)),
+        title: "Side Income Security",
+        description: `Monthly distributions cover ${personalProfile.situation === 'family' ? 'family expenses' : 'personal expenses'} & dining`,
+        monthlyIncome: Math.round((baseIncome * 0.3) * situationMultiplier),
+        icon: DollarSign,
+        color: "text-blue-500",
+      },
+      {
+        month: Math.round(8 * (3 / personalProfile.timeline)),
+        title: "Housing Freedom",
+        description: `Business cash flow covers ${personalProfile.location} housing costs`,
+        monthlyIncome: Math.round((baseIncome * 0.6) * situationMultiplier),
+        icon: Home,
+        color: "text-green-500",
+      },
+      {
+        month: Math.round(14 * (3 / personalProfile.timeline)),
+        title: "Career Optionality",
+        description: `Replace ${formatCurrency(personalProfile.currentIncome)} salary - work becomes a choice`,
+        monthlyIncome: Math.round(baseIncome * situationMultiplier),
+        icon: Trophy,
+        color: "text-purple-500",
+      },
+      {
+        month: Math.round(18 * (3 / personalProfile.timeline)),
+        title: "Investment Runway",
+        description: "Accumulate capital for next acquisition",
+        monthlyIncome: Math.round((targetIncome * 1.2) * situationMultiplier),
+        icon: Rocket,
+        color: "text-orange-500",
+      },
+      {
+        month: Math.round(24 * (3 / personalProfile.timeline)),
+        title: "Portfolio Expansion",
+        description: "Acquire Business #2 with proven playbook",
+        monthlyIncome: Math.round((targetIncome * 1.5) * situationMultiplier),
+        icon: Building2,
+        color: "text-indigo-500",
+      },
+      {
+        month: Math.round(36 * (3 / personalProfile.timeline)),
+        title: "Financial Independence",
+        description: `Multi-business portfolio generating ${formatCurrency(targetIncome * 2 * situationMultiplier)}/month`,
+        monthlyIncome: Math.round((targetIncome * 2) * situationMultiplier),
+        icon: Plane,
+        color: "text-pink-500",
+      },
+    ];
+  }, [personalProfile]);
 
   // Base case monthly distributions from Raleigh Keystone
   const monthlyDistributions = useMemo(() => {
@@ -62,68 +182,16 @@ const FinancialFreedomRoadmap: React.FC = () => {
     return data;
   }, [selectedScenario]);
 
-  const lifestyleMilestones: LifestyleMilestone[] = [
-    {
-      month: 3,
-      title: "Side Income Security",
-      description: "Monthly distributions cover car payments & dining out",
-      monthlyIncome: 8000,
-      icon: DollarSign,
-      color: "text-blue-500",
-    },
-    {
-      month: 8,
-      title: "Mortgage Freedom",
-      description: "Business cash flow covers full housing costs",
-      monthlyIncome: 15000,
-      icon: Home,
-      color: "text-green-500",
-    },
-    {
-      month: 14,
-      title: "Career Optionality",
-      description: "Replace W2 salary - work becomes a choice",
-      monthlyIncome: 25000,
-      icon: Trophy,
-      color: "text-purple-500",
-    },
-    {
-      month: 18,
-      title: "Investment Runway",
-      description: "Accumulate capital for next acquisition",
-      monthlyIncome: 35000,
-      icon: Rocket,
-      color: "text-orange-500",
-    },
-    {
-      month: 24,
-      title: "Portfolio Expansion",
-      description: "Acquire Business #2 with proven playbook",
-      monthlyIncome: 45000,
-      icon: Building2,
-      color: "text-indigo-500",
-    },
-    {
-      month: 36,
-      title: "Financial Independence",
-      description: "Multi-business portfolio generating $50K+/month",
-      monthlyIncome: 65000,
-      icon: Plane,
-      color: "text-pink-500",
-    },
-  ];
-
   const portfolioGrowthData = useMemo(() => {
     const data = [];
     let businesses = 1;
-    let totalMonthlyIncome = monthlyDistributions[11]?.monthlyIncome || 25000;
+    let totalMonthlyIncome = monthlyDistributions[11]?.monthlyIncome || personalProfile.targetMonthlyIncome;
     
     for (let year = 1; year <= 5; year++) {
       if (year > 1) {
-        // Add new business every 18 months
         if (year === 2 || year === 4) {
           businesses += 1;
-          totalMonthlyIncome += totalMonthlyIncome * 0.8; // New business at 80% of previous
+          totalMonthlyIncome += totalMonthlyIncome * 0.8;
         }
       }
       
@@ -132,32 +200,37 @@ const FinancialFreedomRoadmap: React.FC = () => {
         businesses,
         monthlyIncome: Math.round(totalMonthlyIncome),
         portfolioValue: Math.round(totalMonthlyIncome * 12 * 5),
-        acquisitionCapacity: Math.round(totalMonthlyIncome * 6), // 6 months of income for next deal
+        acquisitionCapacity: Math.round(totalMonthlyIncome * 6),
       });
       
-      totalMonthlyIncome *= 1.15; // 15% annual growth
+      totalMonthlyIncome *= 1.15;
     }
     
     return data;
-  }, [monthlyDistributions]);
+  }, [monthlyDistributions, personalProfile.targetMonthlyIncome]);
 
   const wealthBuildingMetrics = useMemo(() => {
     const currentData = monthlyDistributions[monthlyDistributions.length - 1];
-    const annualIncome = currentData.monthlyIncome * 12;
-    const portfolioValue = currentData.portfolioValue;
+    const annualIncome = currentData?.monthlyIncome * 12 || 0;
+    const portfolioValue = currentData?.portfolioValue || 0;
     
     return {
-      timeToFreedom: Math.round(250000 / currentData.monthlyIncome), // Months to replace $100K salary
-      nextAcquisitionFunding: Math.round(currentData.monthlyIncome * 6),
-      wealthMultiplier: Math.round(portfolioValue / 50000), // Assuming $50K initial investment
-      passiveIncomeRatio: Math.round((annualIncome / 75000) * 100), // vs median household income
+      timeToFreedom: Math.round(personalProfile.targetMonthlyIncome * 12 / (currentData?.monthlyIncome || 1)),
+      nextAcquisitionFunding: Math.round((currentData?.monthlyIncome || 0) * 6),
+      wealthMultiplier: Math.round(portfolioValue / personalProfile.investmentAmount),
+      passiveIncomeRatio: Math.round((annualIncome / personalProfile.currentIncome) * 100),
     };
-  }, [monthlyDistributions]);
+  }, [monthlyDistributions, personalProfile]);
 
   const chartConfig = {
     monthlyIncome: { label: "Monthly Income", color: "#10b981" },
     cumulativeIncome: { label: "Cumulative", color: "#3b82f6" },
     portfolioValue: { label: "Portfolio Value", color: "#8b5cf6" },
+  };
+
+  const handleProfileChange = (newProfile: PersonalProfile) => {
+    setPersonalProfile(newProfile);
+    setIsPersonalized(true);
   };
 
   return (
@@ -167,11 +240,11 @@ const FinancialFreedomRoadmap: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Target className="w-6 h-6 mr-3 text-green-500" />
-            Your Path to Financial Freedom
+            {isPersonalized ? "Your Path to Financial Freedom" : "A Path to Financial Freedom"}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Scenario Selection */}
             <div>
               <label className="block text-sm font-semibold mb-2">Growth Scenario</label>
@@ -181,8 +254,12 @@ const FinancialFreedomRoadmap: React.FC = () => {
                     key={scenario}
                     variant={selectedScenario === scenario ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setSelectedScenario(scenario)}
+                    onClick={() => {
+                      setSelectedScenario(scenario);
+                      setIsPersonalized(false);
+                    }}
                     className="capitalize"
+                    disabled={isPersonalized}
                   >
                     {scenario}
                   </Button>
@@ -207,9 +284,65 @@ const FinancialFreedomRoadmap: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            {/* Personalization Toggle */}
+            <div>
+              <label className="block text-sm font-semibold mb-2">Personalization</label>
+              <div className="flex gap-2">
+                <Button
+                  variant={!isPersonalized ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setIsPersonalized(false)}
+                >
+                  Default
+                </Button>
+                <Button
+                  variant={showPersonalForm ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setShowPersonalForm(!showPersonalForm)}
+                  className="flex items-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  {isPersonalized ? 'Edit Profile' : 'Customize'}
+                </Button>
+              </div>
+            </div>
           </div>
+
+          {isPersonalized && (
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-blue-700 dark:text-blue-300">
+                    Showing personalized scenario for {personalProfile.situation === 'single' ? 'individual' : personalProfile.situation} in {personalProfile.location}
+                  </p>
+                  <p className="text-sm text-blue-600 dark:text-blue-400">
+                    {formatCurrency(personalProfile.investmentAmount)} investment • {formatCurrency(personalProfile.targetMonthlyIncome)}/month target • {personalProfile.timeline} year timeline
+                  </p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowPersonalForm(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  Adjust
+                </Button>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* Personal Profile Form */}
+      {showPersonalForm && (
+        <PersonalProfileForm
+          profile={personalProfile}
+          onProfileChange={handleProfileChange}
+          onClose={() => setShowPersonalForm(false)}
+        />
+      )}
 
       {/* Freedom Metrics Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -259,7 +392,7 @@ const FinancialFreedomRoadmap: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">vs Median Income</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">vs Current Income</p>
                 <p className="text-2xl font-bold text-indigo-600">
                   {wealthBuildingMetrics.passiveIncomeRatio}%
                 </p>
@@ -274,7 +407,9 @@ const FinancialFreedomRoadmap: React.FC = () => {
       {viewMode === 'lifestyle' && (
         <Card>
           <CardHeader>
-            <CardTitle>Lifestyle Transformation Timeline</CardTitle>
+            <CardTitle>
+              {isPersonalized ? "Your Lifestyle Transformation Timeline" : "Lifestyle Transformation Timeline"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
@@ -392,15 +527,17 @@ const FinancialFreedomRoadmap: React.FC = () => {
         <CardHeader>
           <CardTitle className="text-green-700 dark:text-green-300 flex items-center">
             <Plane className="w-6 h-6 mr-3" />
-            Your Freedom Declaration
+            {isPersonalized ? "Your Freedom Declaration" : "The Freedom Declaration"}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="prose prose-lg max-w-none dark:prose-invert">
             <p className="text-lg leading-relaxed">
-              This isn't just an investment—it's your roadmap to financial independence. In {wealthBuildingMetrics.timeToFreedom} months, 
-              you'll replace your W2 income. By month 24, you'll have the capital and proven playbook to acquire your second business. 
-              By year 3, you'll be generating over <strong>{formatCurrency(monthlyDistributions[35]?.monthlyIncome || 65000)} per month</strong> in 
+              This isn't just an investment—it's {isPersonalized ? "your" : "a"} roadmap to financial independence. 
+              In {wealthBuildingMetrics.timeToFreedom} months, {isPersonalized ? "you'll" : "one could"} replace 
+              {isPersonalized ? " your" : " a"} W2 income. By month 24, {isPersonalized ? "you'll" : "the acquirer will"} have 
+              the capital and proven playbook to acquire {isPersonalized ? "your" : "a"} second business. 
+              By year 3, {isPersonalized ? "you'll" : "they'll"} be generating over <strong>{formatCurrency(monthlyDistributions[35]?.monthlyIncome || personalProfile.targetMonthlyIncome * 2)} per month</strong> in 
               passive income from a diversified portfolio of essential service businesses.
             </p>
             <p className="text-green-600 dark:text-green-400 font-semibold">
