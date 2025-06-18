@@ -3,6 +3,7 @@ import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText,
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import PerformanceSimulator from '@/components/PerformanceSimulator';
 
 // Custom components
 import Section from '@/components/Section';
@@ -18,10 +19,11 @@ const Index = () => {
     { id: 'strategic-rationale', title: 'III. Strategic Rationale', icon: HardHat },
     { id: '100-day-plan', title: 'IV. The 100-Day Plan', icon: Clipboard },
     { id: 'capital-strategy', title: 'V. Dynamic Capital Strategy', icon: Layers, iconColor: 'text-purple-500' },
-    { id: 'financial-projections', title: 'VI. Financial Projections', icon: DollarSign },
-    { id: 'investor-opportunity', title: 'VII. Investor Partnership', icon: Users, iconColor: 'text-green-500' },
-    { id: 'risk-analysis', title: 'VIII. Risk Analysis & Mitigation', icon: GitBranch },
-    { id: 'appendix', title: 'IX. Appendix: Supporting Data', icon: ScrollText },
+    { id: 'performance-simulator', title: 'VI. Post-Acquisition Performance Simulator', icon: DollarSign, iconColor: 'text-green-500' },
+    { id: 'financial-projections', title: 'VII. Financial Projections', icon: DollarSign },
+    { id: 'investor-opportunity', title: 'VIII. Investor Partnership', icon: Users, iconColor: 'text-green-500' },
+    { id: 'risk-analysis', title: 'IX. Risk Analysis & Mitigation', icon: GitBranch },
+    { id: 'appendix', title: 'X. Appendix: Supporting Data', icon: ScrollText },
   ];
 
   return (
@@ -180,7 +182,18 @@ const Index = () => {
           <DynamicCapitalStack />
         </Section>
 
-        <Section id="financial-projections" title="VI. Financial Projections" icon={DollarSign}>
+        <Section id="performance-simulator" title="VI. Post-Acquisition Performance Simulator" icon={DollarSign} iconColor="text-green-500">
+          <div className="mb-8">
+            <p className="text-lg leading-relaxed mb-6">
+              This interactive simulator models the financial performance and cash flow distributions post-acquisition. 
+              Adjust growth assumptions and scenarios to see how different outcomes affect investor returns, debt coverage, 
+              and owner distributions over time.
+            </p>
+          </div>
+          <PerformanceSimulator />
+        </Section>
+
+        <Section id="financial-projections" title="VII. Financial Projections" icon={DollarSign}>
           <p className="text-lg mb-6">
             The following pro-forma demonstrates the powerful EBITDA growth that fuels the entire capital structure, ensuring all tranches of capital are well-covered.
           </p>
@@ -213,7 +226,7 @@ const Index = () => {
           </Card>
         </Section>
         
-        <Section id="investor-opportunity" title="VII. Investor Partnership" icon={Users} iconColor="text-green-500">
+        <Section id="investor-opportunity" title="VIII. Investor Partnership" icon={Users} iconColor="text-green-500">
           <div className="mb-8">
             <p className="text-lg leading-relaxed mb-6">
               With the deal structure de-risked through the layered capital strategy, we are syndicating a preferred equity tranche to mission-aligned impact funds (Veteran, Minority, ESG). This is an opportunity to secure a preferred return on a high-cashflow asset with strong downside protection.
@@ -245,7 +258,7 @@ const Index = () => {
           </Card>
         </Section>
         
-        <Section id="risk-analysis" title="VIII. Risk Analysis & Mitigation" icon={GitBranch}>
+        <Section id="risk-analysis" title="IX. Risk Analysis & Mitigation" icon={GitBranch}>
           <Card>
             <CardHeader>
               <CardTitle>Risk Assessment</CardTitle>
@@ -279,7 +292,7 @@ const Index = () => {
           </Card>
         </Section>
         
-        <Section id="appendix" title="IX. Appendix: Supporting Data" icon={ScrollText}>
+        <Section id="appendix" title="X. Appendix: Supporting Data" icon={ScrollText}>
           <p className="text-lg">Supporting documentation, market analysis, and detailed financial models are available in the full data room.</p>
         </Section>
 
