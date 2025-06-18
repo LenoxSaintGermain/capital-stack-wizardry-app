@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { TrendingUp, Calendar, DollarSign, Home, Plane, Trophy, Building2, MapPin, Target, Clock, Rocket, Settings, User } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,7 +52,7 @@ const FinancialFreedomRoadmap: React.FC = () => {
     return 'base';
   };
 
-  // Base case monthly distributions adapted to personal profile
+  // Monthly distributions adapted to personal profile
   const monthlyDistributions = useMemo(() => {
     const scenarios = {
       conservative: { y1: 15000, y2: 22000, y3: 30000 },
@@ -149,38 +150,6 @@ const FinancialFreedomRoadmap: React.FC = () => {
       },
     ];
   }, [personalProfile]);
-
-  // Base case monthly distributions from Raleigh Keystone
-  const monthlyDistributions = useMemo(() => {
-    const scenarios = {
-      conservative: { y1: 18000, y2: 25000, y3: 32000 },
-      base: { y1: 25000, y2: 35000, y3: 48000 },
-      aggressive: { y1: 32000, y2: 45000, y3: 65000 },
-    };
-    
-    const scenario = scenarios[selectedScenario];
-    const data = [];
-    
-    for (let month = 1; month <= 36; month++) {
-      let monthlyIncome;
-      if (month <= 12) {
-        monthlyIncome = scenario.y1 * (month / 12);
-      } else if (month <= 24) {
-        monthlyIncome = scenario.y1 + (scenario.y2 - scenario.y1) * ((month - 12) / 12);
-      } else {
-        monthlyIncome = scenario.y2 + (scenario.y3 - scenario.y2) * ((month - 24) / 12);
-      }
-      
-      data.push({
-        month,
-        monthlyIncome: Math.round(monthlyIncome),
-        cumulativeIncome: data.length > 0 ? data[data.length - 1].cumulativeIncome + Math.round(monthlyIncome) : Math.round(monthlyIncome),
-        portfolioValue: Math.round(monthlyIncome * 12 * 5), // 5x multiple for portfolio valuation
-      });
-    }
-    
-    return data;
-  }, [selectedScenario]);
 
   const portfolioGrowthData = useMemo(() => {
     const data = [];
