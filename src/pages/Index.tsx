@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText, GitBranch, Home, ChevronDown, ChevronUp, Users, Layers, CheckSquare } from 'lucide-react';
+import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText, GitBranch, Home, ChevronDown, ChevronUp, Users, Layers, CheckSquare, Plane } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import PerformanceSimulator from '@/components/PerformanceSimulator';
+import FinancialFreedomRoadmap from '@/components/FinancialFreedomRoadmap';
 
 // Custom components
 import Section from '@/components/Section';
@@ -20,10 +21,11 @@ const Index = () => {
     { id: '100-day-plan', title: 'IV. The 100-Day Plan', icon: Clipboard },
     { id: 'capital-strategy', title: 'V. Dynamic Capital Strategy', icon: Layers, iconColor: 'text-purple-500' },
     { id: 'performance-simulator', title: 'VI. Post-Acquisition Performance Simulator', icon: DollarSign, iconColor: 'text-green-500' },
-    { id: 'financial-projections', title: 'VII. Financial Projections', icon: DollarSign },
-    { id: 'investor-opportunity', title: 'VIII. Investor Partnership', icon: Users, iconColor: 'text-green-500' },
-    { id: 'risk-analysis', title: 'IX. Risk Analysis & Mitigation', icon: GitBranch },
-    { id: 'appendix', title: 'X. Appendix: Supporting Data', icon: ScrollText },
+    { id: 'freedom-roadmap', title: 'VII. Your Path to Financial Freedom', icon: Plane, iconColor: 'text-blue-500' },
+    { id: 'financial-projections', title: 'VIII. Financial Projections', icon: DollarSign },
+    { id: 'investor-opportunity', title: 'IX. Investor Partnership', icon: Users, iconColor: 'text-green-500' },
+    { id: 'risk-analysis', title: 'X. Risk Analysis & Mitigation', icon: GitBranch },
+    { id: 'appendix', title: 'XI. Appendix: Supporting Data', icon: ScrollText },
   ];
 
   return (
@@ -33,6 +35,7 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="flex-1 p-6 lg:p-10 overflow-y-auto">
+        {/* Header */}
         <header className="mb-12 text-center">
           <div className="mb-6">
             <Badge variant="outline" className="mb-4 text-lg px-4 py-2">
@@ -50,6 +53,7 @@ const Index = () => {
           </p>
         </header>
 
+        {/* Sections */}
         <Section id="executive-summary" title="I. Executive Summary" icon={BarChart}>
           <div className="prose prose-lg max-w-none dark:prose-invert">
             <p className="text-lg leading-relaxed mb-6">
@@ -193,7 +197,18 @@ const Index = () => {
           <PerformanceSimulator />
         </Section>
 
-        <Section id="financial-projections" title="VII. Financial Projections" icon={DollarSign}>
+        <Section id="freedom-roadmap" title="VII. Your Path to Financial Freedom" icon={Plane} iconColor="text-blue-500">
+          <div className="mb-8">
+            <p className="text-lg leading-relaxed mb-6">
+              This acquisition isn't just about financial returns—it's about transforming your life. See how the monthly distributions 
+              from Raleigh Keystone create a clear roadmap to financial independence, enabling you to replace your W2 income, 
+              fund additional acquisitions, and build a portfolio of cash-flowing businesses that work while you sleep.
+            </p>
+          </div>
+          <FinancialFreedomRoadmap />
+        </Section>
+
+        <Section id="financial-projections" title="VIII. Financial Projections" icon={DollarSign}>
           <p className="text-lg mb-6">
             The following pro-forma demonstrates the powerful EBITDA growth that fuels the entire capital structure, ensuring all tranches of capital are well-covered.
           </p>
@@ -226,7 +241,7 @@ const Index = () => {
           </Card>
         </Section>
         
-        <Section id="investor-opportunity" title="VIII. Investor Partnership" icon={Users} iconColor="text-green-500">
+        <Section id="investor-opportunity" title="IX. Investor Partnership" icon={Users} iconColor="text-green-500">
           <div className="mb-8">
             <p className="text-lg leading-relaxed mb-6">
               With the deal structure de-risked through the layered capital strategy, we are syndicating a preferred equity tranche to mission-aligned impact funds (Veteran, Minority, ESG). This is an opportunity to secure a preferred return on a high-cashflow asset with strong downside protection.
@@ -258,7 +273,7 @@ const Index = () => {
           </Card>
         </Section>
         
-        <Section id="risk-analysis" title="IX. Risk Analysis & Mitigation" icon={GitBranch}>
+        <Section id="risk-analysis" title="X. Risk Analysis & Mitigation" icon={GitBranch}>
           <Card>
             <CardHeader>
               <CardTitle>Risk Assessment</CardTitle>
@@ -292,7 +307,7 @@ const Index = () => {
           </Card>
         </Section>
         
-        <Section id="appendix" title="X. Appendix: Supporting Data" icon={ScrollText}>
+        <Section id="appendix" title="XI. Appendix: Supporting Data" icon={ScrollText}>
           <p className="text-lg">Supporting documentation, market analysis, and detailed financial models are available in the full data room.</p>
         </Section>
 
