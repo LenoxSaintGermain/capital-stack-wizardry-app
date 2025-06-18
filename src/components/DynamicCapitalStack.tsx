@@ -330,7 +330,7 @@ const DynamicCapitalStack: React.FC = () => {
             <li className="flex items-start">
               <CheckSquare className="w-5 h-5 mr-3 mt-1 text-green-500 flex-shrink-0" />
               <div>
-                <span className="font-bold">Seller-Note Re-trade:</span> Present earn-out math (20% note, 6% interest, 30% premium if EBITDA >= $750k in Y2).
+                <span className="font-bold">Seller-Note Re-trade:</span> Present earn-out math (20% note, 6% interest, 30% premium if EBITDA {'>'}= $750k in Y2).
               </div>
             </li>
             <li className="flex items-start">

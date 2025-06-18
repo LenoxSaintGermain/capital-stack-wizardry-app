@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText, GitBranch, Home, ChevronDown, ChevronUp, Users, Layers, CheckSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -239,7 +238,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-start">
                   <span className="font-semibold mr-2">Impact:</span>
-                  <span>This tranche provides bragging rights on vet-led wealth creation while you retain >80% of common equity and upside.</span>
+                  <span>This tranche provides bragging rights on vet-led wealth creation while you retain {'>'}80% of common equity and upside.</span>
                 </li>
               </ul>
             </CardContent>
