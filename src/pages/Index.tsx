@@ -10,7 +10,7 @@ import FinancialFreedomRoadmap from '@/components/FinancialFreedomRoadmap';
 import DynamicCapitalStack from '@/components/DynamicCapitalStack';
 import DealSelector from '@/components/DealSelector';
 import BusinessAnalysisPanel from '@/components/BusinessAnalysisPanel';
-import { AppSidebar } from "@/components/AppSidebar";
+import AppSidebar from "@/components/AppSidebar";
 
 interface Business {
   id: string;

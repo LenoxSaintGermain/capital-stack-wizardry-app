@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, DollarSign, Target, Users, Shield, CheckCircle, AlertTriangle, Building2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,9 +16,10 @@ interface Business {
   annual_net_profit: number;
   composite_score: number;
   automation_opportunity_score: number;
-  description: string;
-  strategic_flags: any;
-  resilience_factors: any;
+  last_analyzed_at: string;
+  description?: string;
+  strategic_flags?: any;
+  resilience_factors?: any;
 }
 
 interface EnrichmentData {
@@ -143,9 +143,11 @@ const BusinessAnalysisPanel: React.FC<BusinessAnalysisPanelProps> = ({ selectedB
             </div>
           </div>
           
-          <div className="mt-6">
-            <p className="text-gray-700 leading-relaxed">{selectedBusiness.description}</p>
-          </div>
+          {selectedBusiness.description && (
+            <div className="mt-6">
+              <p className="text-gray-700 leading-relaxed">{selectedBusiness.description}</p>
+            </div>
+          )}
 
           <div className="mt-6 flex flex-wrap gap-2">
             <Badge variant="outline" className="text-blue-600 border-blue-200">
