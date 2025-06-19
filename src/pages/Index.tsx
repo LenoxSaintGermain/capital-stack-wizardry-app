@@ -44,9 +44,18 @@ const Index = () => {
     { id: 'roadmap', label: 'Freedom Roadmap', icon: Plane },
   ];
 
+  // Define sidebar sections for AppSidebar
+  const sidebarSections = [
+    { id: 'overview', title: 'Overview', icon: Home },
+    { id: 'analysis', title: 'Deal Analysis', icon: BarChart },
+    { id: 'capital', title: 'Capital Stack', icon: DollarSign },
+    { id: 'simulator', title: 'Performance', icon: Target },
+    { id: 'roadmap', title: 'Freedom Roadmap', icon: Plane },
+  ];
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar sections={sidebarSections} isAdmin={false} />
       <SidebarInset>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <header className="border-b bg-white dark:bg-gray-800 shadow-sm">
