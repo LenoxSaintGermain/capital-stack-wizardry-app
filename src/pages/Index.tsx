@@ -28,6 +28,7 @@ interface Business {
   annual_net_profit: number;
   composite_score: number;
   automation_opportunity_score: number;
+  last_analyzed_at: string;
   description?: string;
   cap_rate?: number;
   payback_years?: number;
@@ -75,6 +76,10 @@ const Index = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDealSelect = (deal: Business) => {
+    setSelectedDeal(deal);
   };
 
   // Show auth prompt for non-authenticated users
@@ -163,7 +168,7 @@ const Index = () => {
 
           {/* Deal Selector */}
           <Section id="deal-selector" title="Deal Selection" icon={Building} iconColor="text-blue-500">
-            <DealSelector selectedDeal={selectedDeal} onDealSelect={setSelectedDeal} />
+            <DealSelector selectedDeal={selectedDeal} onDealSelect={handleDealSelect} />
           </Section>
 
           {/* Agent Control Panel */}
@@ -346,7 +351,7 @@ const Index = () => {
                     we will deploy a sophisticated, multi-tranche capital stack based on the deal's {formatCurrency(selectedDeal.asking_price)} asking price.
                   </p>
                 </div>
-                <DynamicCapitalStack selectedDeal={selectedDeal} />
+                <DynamicCapitalStack />
               </Section>
 
               <Section id="performance-simulator" title="VI. Post-Acquisition Performance Simulator" icon={DollarSign} iconColor="text-green-500">
@@ -357,7 +362,7 @@ const Index = () => {
                     adjust scenarios to see investor returns and owner distributions.
                   </p>
                 </div>
-                <PerformanceSimulator selectedDeal={selectedDeal} />
+                <PerformanceSimulator />
               </Section>
 
               <Section id="freedom-roadmap" title="VII. Your Path to Financial Freedom" icon={Plane} iconColor="text-blue-500">
@@ -367,7 +372,7 @@ const Index = () => {
                     See how the projected monthly distributions enable you to replace W2 income and build a portfolio of cash-flowing businesses.
                   </p>
                 </div>
-                <FinancialFreedomRoadmap selectedDeal={selectedDeal} />
+                <FinancialFreedomRoadmap />
               </Section>
 
               <Section id="financial-projections" title="VIII. Financial Projections" icon={DollarSign}>
