@@ -1,9 +1,9 @@
-
 import React, { useState, useMemo } from 'react';
 import { CheckSquare, TrendingUp, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('en-US', {
@@ -145,44 +145,84 @@ const DynamicCapitalStack: React.FC = () => {
 
   const dscrStatus = getDSCRStatus(capitalStack.dscr);
 
+  const getColorClasses = (color: string, isActive: boolean) => {
+    const colorMap = {
+      blue: {
+        border: isActive ? 'border-l-blue-500' : 'border-l-gray-300',
+        bg: isActive ? 'bg-blue-50/50 dark:bg-blue-900/20' : '',
+        text: 'text-blue-600'
+      },
+      indigo: {
+        border: isActive ? 'border-l-indigo-500' : 'border-l-gray-300',
+        bg: isActive ? 'bg-indigo-50/50 dark:bg-indigo-900/20' : '',
+        text: 'text-indigo-600'
+      },
+      purple: {
+        border: isActive ? 'border-l-purple-500' : 'border-l-gray-300',
+        bg: isActive ? 'bg-purple-50/50 dark:bg-purple-900/20' : '',
+        text: 'text-purple-600'
+      },
+      green: {
+        border: isActive ? 'border-l-green-500' : 'border-l-gray-300',
+        bg: isActive ? 'bg-green-50/50 dark:bg-green-900/20' : '',
+        text: 'text-green-600'
+      },
+      yellow: {
+        border: isActive ? 'border-l-yellow-500' : 'border-l-gray-300',
+        bg: isActive ? 'bg-yellow-50/50 dark:bg-yellow-900/20' : '',
+        text: 'text-yellow-600'
+      },
+      red: {
+        border: isActive ? 'border-l-red-500' : 'border-l-gray-300',
+        bg: isActive ? 'bg-red-50/50 dark:bg-red-900/20' : '',
+        text: 'text-red-600'
+      }
+    };
+    return colorMap[color as keyof typeof colorMap] || colorMap.blue;
+  };
+
   return (
     <div className="space-y-8">
       {/* Levers Section */}
       <div>
-        <h3 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-100 flex items-center">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100 flex items-center">
           <TrendingUp className="w-6 h-6 mr-3 text-purple-500" />
           Capital Structure Levers
         </h3>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Toggle these levers to see how different capital sources affect your deal structure and DSCR. 
+          Each lever represents a specific financing strategy that can reduce your required equity investment.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {leversData.map(lever => (
-            <Card 
-              key={lever.id} 
-              className={`cursor-pointer transition-all duration-300 hover:shadow-lg border-l-4 ${
-                activeLevers[lever.id] 
-                  ? `border-l-${lever.color}-500 bg-${lever.color}-50/50 dark:bg-${lever.color}-900/20` 
-                  : 'border-l-gray-300 hover:border-l-gray-400'
-              }`}
-              onClick={() => toggleLever(lever.id)}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-bold text-gray-800 dark:text-gray-100">
-                    {lever.title}
-                  </CardTitle>
-                  <div className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
-                    activeLevers[lever.id] 
-                      ? `bg-${lever.color}-500 border-${lever.color}-500` 
-                      : 'border-gray-400 hover:border-gray-500'
-                  }`}>
-                    {activeLevers[lever.id] && <CheckSquare className="w-4 h-4 text-white" />}
+          {leversData.map(lever => {
+            const isActive = activeLevers[lever.id];
+            const colors = getColorClasses(lever.color, isActive);
+            
+            return (
+              <Card 
+                key={lever.id} 
+                className={`cursor-pointer transition-all duration-300 hover:shadow-lg border-l-4 ${colors.border} ${colors.bg}`}
+                onClick={() => toggleLever(lever.id)}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <CardTitle className="text-sm font-bold text-gray-800 dark:text-gray-100 flex-1">
+                      {lever.title}
+                    </CardTitle>
+                    <Checkbox
+                      checked={isActive}
+                      onChange={() => toggleLever(lever.id)}
+                      className="mt-1 flex-shrink-0"
+                      onClick={(e) => e.stopPropagation()}
+                    />
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-gray-600 dark:text-gray-400">{lever.impact}</p>
-              </CardContent>
-            </Card>
-          ))}
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">{lever.impact}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
 
