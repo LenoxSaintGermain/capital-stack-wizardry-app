@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText, GitBranch, Home, Users, Layers, Plane } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import PerformanceSimulator from '@/components/PerformanceSimulator';
 import FinancialFreedomRoadmap from '@/components/FinancialFreedomRoadmap';
