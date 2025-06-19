@@ -41,14 +41,31 @@ const DealSelector: React.FC<DealSelectorProps> = ({ selectedDeal, onDealSelect 
 
       if (error) throw error;
       
-      setDeals(data || []);
+      // Prioritize Raleigh deals first, then sort by composite score
+      const sortedDeals = (data || []).sort((a, b) => {
+        // Check if either deal is from Raleigh or has "Raleigh" in the name/location
+        const aIsRaleigh = a.location?.toLowerCase().includes('raleigh') || 
+                          a.business_name?.toLowerCase().includes('raleigh') ||
+                          a.business_name?.toLowerCase().includes('keystone');
+        const bIsRaleigh = b.location?.toLowerCase().includes('raleigh') || 
+                          b.business_name?.toLowerCase().includes('raleigh') ||
+                          b.business_name?.toLowerCase().includes('keystone');
+        
+        if (aIsRaleigh && !bIsRaleigh) return -1;
+        if (!aIsRaleigh && bIsRaleigh) return 1;
+        
+        // If both are Raleigh or neither, sort by composite score
+        return b.composite_score - a.composite_score;
+      });
       
-      // Auto-select the highest scoring deal if none selected
-      if (!selectedDeal && data && data.length > 0) {
-        onDealSelect(data[0]);
+      setDeals(sortedDeals);
+      
+      // Auto-select the highest priority deal if none selected
+      if (!selectedDeal && sortedDeals.length > 0) {
+        onDealSelect(sortedDeals[0]);
       }
     } catch (error) {
-      console.error('Error fetching deals:',error);
+      console.error('Error fetching deals:', error);
     } finally {
       setLoading(false);
     }
@@ -67,6 +84,12 @@ const DealSelector: React.FC<DealSelectorProps> = ({ selectedDeal, onDealSelect 
     if (score >= 0.8) return 'text-green-600 bg-green-50';
     if (score >= 0.6) return 'text-yellow-600 bg-yellow-50';
     return 'text-red-600 bg-red-50';
+  };
+
+  const isPriorityDeal = (deal: Business) => {
+    return deal.location?.toLowerCase().includes('raleigh') || 
+           deal.business_name?.toLowerCase().includes('raleigh') ||
+           deal.business_name?.toLowerCase().includes('keystone');
   };
 
   if (loading) {
@@ -110,9 +133,14 @@ const DealSelector: React.FC<DealSelectorProps> = ({ selectedDeal, onDealSelect 
             <div className="flex items-center space-x-4">
               <Building className="w-6 h-6 text-blue-600" />
               <div className="text-left">
-                <h3 className="font-semibold text-lg">
-                  {selectedDeal ? selectedDeal.business_name : 'Select a Deal'}
-                </h3>
+                <div className="flex items-center space-x-2">
+                  <h3 className="font-semibold text-lg">
+                    {selectedDeal ? selectedDeal.business_name : 'Select a Deal'}
+                  </h3>
+                  {selectedDeal && isPriorityDeal(selectedDeal) && (
+                    <Badge className="text-xs bg-blue-100 text-blue-800">Priority</Badge>
+                  )}
+                </div>
                 {selectedDeal && (
                   <div className="flex items-center space-x-4 mt-1">
                     <span className="text-sm text-gray-600">{selectedDeal.sector}</span>
@@ -150,6 +178,9 @@ const DealSelector: React.FC<DealSelectorProps> = ({ selectedDeal, onDealSelect 
                     <div className="flex-1">
                       <div className="flex items-center space-x-3">
                         <h4 className="font-semibold">{deal.business_name}</h4>
+                        {isPriorityDeal(deal) && (
+                          <Badge className="text-xs bg-blue-100 text-blue-800">Priority</Badge>
+                        )}
                         {selectedDeal?.id === deal.id && (
                           <CheckCircle className="w-4 h-4 text-blue-600" />
                         )}
