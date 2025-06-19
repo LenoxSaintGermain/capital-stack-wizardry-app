@@ -15,6 +15,7 @@ export type Database = {
           businesses_processed: number | null
           businesses_updated: number | null
           completed_at: string | null
+          created_by: string | null
           error_message: string | null
           execution_time_seconds: number | null
           id: string
@@ -27,6 +28,7 @@ export type Database = {
           businesses_processed?: number | null
           businesses_updated?: number | null
           completed_at?: string | null
+          created_by?: string | null
           error_message?: string | null
           execution_time_seconds?: number | null
           id?: string
@@ -39,6 +41,7 @@ export type Database = {
           businesses_processed?: number | null
           businesses_updated?: number | null
           completed_at?: string | null
+          created_by?: string | null
           error_message?: string | null
           execution_time_seconds?: number | null
           id?: string
@@ -46,7 +49,15 @@ export type Database = {
           started_at?: string
           status?: Database["public"]["Enums"]["analysis_status"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "analysis_runs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       business_sources: {
         Row: {
@@ -97,6 +108,7 @@ export type Database = {
           cap_rate: number | null
           composite_score: number | null
           created_at: string
+          created_by: string | null
           description: string | null
           government_contracts: boolean | null
           id: string
@@ -124,6 +136,7 @@ export type Database = {
           cap_rate?: number | null
           composite_score?: number | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
           government_contracts?: boolean | null
           id?: string
@@ -151,6 +164,7 @@ export type Database = {
           cap_rate?: number | null
           composite_score?: number | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
           government_contracts?: boolean | null
           id?: string
@@ -169,7 +183,15 @@ export type Database = {
           updated_at?: string
           url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "businesses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       enrichment_data: {
         Row: {
@@ -179,6 +201,7 @@ export type Database = {
           competitor_analysis: Json | null
           confidence_score: number | null
           created_at: string
+          created_by: string | null
           financial_projections: Json | null
           growth_opportunities: Json | null
           id: string
@@ -193,6 +216,7 @@ export type Database = {
           competitor_analysis?: Json | null
           confidence_score?: number | null
           created_at?: string
+          created_by?: string | null
           financial_projections?: Json | null
           growth_opportunities?: Json | null
           id?: string
@@ -207,6 +231,7 @@ export type Database = {
           competitor_analysis?: Json | null
           confidence_score?: number | null
           created_at?: string
+          created_by?: string | null
           financial_projections?: Json | null
           growth_opportunities?: Json | null
           id?: string
@@ -222,7 +247,47 @@ export type Database = {
             referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "enrichment_data_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          organization: string | null
+          role: string | null
+          subscription_tier: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          organization?: string | null
+          role?: string | null
+          subscription_tier?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          organization?: string | null
+          role?: string | null
+          subscription_tier?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       user_preferences: {
         Row: {
@@ -271,7 +336,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { user_id?: string }
+        Returns: string
+      }
     }
     Enums: {
       analysis_status: "pending" | "processing" | "completed" | "failed"
