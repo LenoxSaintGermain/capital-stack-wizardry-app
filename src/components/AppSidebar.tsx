@@ -19,7 +19,7 @@ interface NavigationSection {
   id: string;
   title: string;
   icon: typeof Home;
-  icon Color?: string;
+  iconColor?: string;
   adminOnly?: boolean;
 }
 
