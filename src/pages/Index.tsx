@@ -11,6 +11,9 @@ import DynamicCapitalStack from '@/components/DynamicCapitalStack';
 import DealSelector from '@/components/DealSelector';
 import BusinessAnalysisPanel from '@/components/BusinessAnalysisPanel';
 import AppSidebar from "@/components/AppSidebar";
+import UserProfile from "@/components/UserProfile";
+import HundredDayPlan from "@/components/HundredDayPlan";
+import InvestorPartnership from "@/components/InvestorPartnership";
 
 interface Business {
   id: string;
@@ -42,16 +45,45 @@ const Index = () => {
     { id: 'capital', label: 'Capital Stack', icon: DollarSign },
     { id: 'simulator', label: 'Performance', icon: Target },
     { id: 'roadmap', label: 'Freedom Roadmap', icon: Plane },
+    { id: 'plan', label: '100-Day Plan', icon: Clipboard },
+    { id: 'partnership', label: 'Investor Terms', icon: Users },
   ];
 
-  // Define sidebar sections for AppSidebar
+  // Define sidebar sections for AppSidebar with scroll functionality
   const sidebarSections = [
     { id: 'overview', title: 'Overview', icon: Home },
     { id: 'analysis', title: 'Deal Analysis', icon: BarChart },
     { id: 'capital', title: 'Capital Stack', icon: DollarSign },
     { id: 'simulator', title: 'Performance', icon: Target },
     { id: 'roadmap', title: 'Freedom Roadmap', icon: Plane },
+    { id: 'plan', title: '100-Day Plan', icon: Clipboard },
+    { id: 'partnership', title: 'Investor Terms', icon: Users },
   ];
+
+  // Safe calculation helpers to prevent NaN
+  const safeCalculate = (value: number, fallback: number = 0) => {
+    return isNaN(value) || !isFinite(value) ? fallback : value;
+  };
+
+  const formatCurrency = (value: number) => {
+    const safeValue = safeCalculate(value);
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(safeValue);
+  };
+
+  const formatPercent = (value: number) => {
+    const safeValue = safeCalculate(value);
+    return `${(safeValue * 100).toFixed(1)}%`;
+  };
+
+  const calculateCapRate = (netProfit: number, askingPrice: number) => {
+    if (!askingPrice || askingPrice === 0) return 0;
+    return safeCalculate((netProfit / askingPrice) * 100);
+  };
 
   return (
     <SidebarProvider>
@@ -59,20 +91,23 @@ const Index = () => {
       <SidebarInset>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <header className="border-b bg-white dark:bg-gray-800 shadow-sm">
-            <div className="flex h-16 items-center px-6">
-              <SidebarTrigger className="mr-4" />
+            <div className="flex h-16 items-center justify-between px-6">
               <div className="flex items-center space-x-4">
+                <SidebarTrigger className="mr-4" />
                 <Building className="h-8 w-8 text-blue-600" />
                 <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                   Project Million Dashboard
                 </h1>
               </div>
+              <UserProfile />
             </div>
           </header>
 
           <main className="p-6">
-            {/* Deal Selector */}
-            <DealSelector selectedDeal={selectedDeal} onDealSelect={handleDealSelect} />
+            {/* Overview Section */}
+            <section id="overview" className="mb-8">
+              <DealSelector selectedDeal={selectedDeal} onDealSelect={handleDealSelect} />
+            </section>
 
             {/* Tab Navigation */}
             <div className="mb-6">
@@ -83,6 +118,7 @@ const Index = () => {
                     return (
                       <button
                         key={item.id}
+                        data-tab-id={item.id}
                         onClick={() => setActiveTab(item.id)}
                         className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
                           activeTab === item.id
@@ -102,11 +138,13 @@ const Index = () => {
             {/* Tab Content */}
             <div className="space-y-6">
               {activeTab === 'analysis' && (
-                <BusinessAnalysisPanel selectedBusiness={selectedDeal} />
+                <section id="analysis">
+                  <BusinessAnalysisPanel selectedBusiness={selectedDeal} />
+                </section>
               )}
 
               {activeTab === 'capital' && (
-                <div className="space-y-6">
+                <section id="capital">
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-2xl flex items-center">
@@ -118,11 +156,11 @@ const Index = () => {
                       <DynamicCapitalStack />
                     </CardContent>
                   </Card>
-                </div>
+                </section>
               )}
 
               {activeTab === 'simulator' && (
-                <div className="space-y-6">
+                <section id="simulator">
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-2xl flex items-center">
@@ -134,11 +172,11 @@ const Index = () => {
                       <PerformanceSimulator />
                     </CardContent>
                   </Card>
-                </div>
+                </section>
               )}
 
               {activeTab === 'roadmap' && (
-                <div className="space-y-6">
+                <section id="roadmap">
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-2xl flex items-center">
@@ -150,36 +188,48 @@ const Index = () => {
                       <FinancialFreedomRoadmap />
                     </CardContent>
                   </Card>
-                </div>
+                </section>
+              )}
+
+              {activeTab === 'plan' && (
+                <section id="plan">
+                  <HundredDayPlan selectedBusiness={selectedDeal} />
+                </section>
+              )}
+
+              {activeTab === 'partnership' && (
+                <section id="partnership">
+                  <InvestorPartnership selectedBusiness={selectedDeal} />
+                </section>
               )}
             </div>
 
-            {/* Quick Stats Footer */}
+            {/* Quick Stats Footer - Fixed NaN calculations */}
             {selectedDeal && (
               <Card className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
                 <CardContent className="p-6">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                     <div>
                       <div className="text-2xl font-bold text-blue-600">
-                        ${(selectedDeal.asking_price / 1000000).toFixed(1)}M
+                        {formatCurrency(selectedDeal.asking_price)}
                       </div>
                       <div className="text-sm text-gray-600">Purchase Price</div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-green-600">
-                        {(selectedDeal.composite_score * 100).toFixed(0)}%
+                        {formatPercent(selectedDeal.composite_score)}
                       </div>
                       <div className="text-sm text-gray-600">Deal Score</div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-purple-600">
-                        {(selectedDeal.automation_opportunity_score * 100).toFixed(0)}%
+                        {formatPercent(selectedDeal.automation_opportunity_score)}
                       </div>
                       <div className="text-sm text-gray-600">AI Opportunity</div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-orange-600">
-                        {((selectedDeal.annual_net_profit / selectedDeal.asking_price) * 100).toFixed(1)}%
+                        {calculateCapRate(selectedDeal.annual_net_profit, selectedDeal.asking_price).toFixed(1)}%
                       </div>
                       <div className="text-sm text-gray-600">Cap Rate</div>
                     </div>
