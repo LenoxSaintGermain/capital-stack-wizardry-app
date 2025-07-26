@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText, GitBranch, Home, Users, Layers, Plane } from 'lucide-react';
+import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText, GitBranch, Home, Users, Layers, Plane, PieChart, UserCheck, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,9 @@ import AppSidebar from "@/components/AppSidebar";
 import UserProfile from "@/components/UserProfile";
 import HundredDayPlan from "@/components/HundredDayPlan";
 import InvestorPartnership from "@/components/InvestorPartnership";
+import PortfolioOverview from "@/components/PortfolioOverview";
+import CRMPipeline from "@/components/CRMPipeline";
+import InvestmentMemoViewer from "@/components/InvestmentMemoViewer";
 
 interface Business {
   id: string;
@@ -33,7 +36,7 @@ interface Business {
 
 const Index = () => {
   const [selectedDeal, setSelectedDeal] = useState<Business | null>(null);
-  const [activeTab, setActiveTab] = useState('analysis');
+  const [activeTab, setActiveTab] = useState('portfolio');
 
   const handleDealSelect = (deal: Business) => {
     setSelectedDeal(deal);
@@ -41,6 +44,9 @@ const Index = () => {
   };
 
   const tabItems = [
+    { id: 'portfolio', label: 'Portfolio Overview', icon: PieChart },
+    { id: 'crm', label: 'CRM Pipeline', icon: UserCheck },
+    { id: 'memos', label: 'Investment Memos', icon: FileText },
     { id: 'analysis', label: 'Deal Analysis', icon: BarChart },
     { id: 'capital', label: 'Capital Stack', icon: DollarSign },
     { id: 'simulator', label: 'Performance', icon: Target },
@@ -137,6 +143,24 @@ const Index = () => {
 
             {/* Tab Content */}
             <div className="space-y-6">
+              {activeTab === 'portfolio' && (
+                <section id="portfolio">
+                  <PortfolioOverview />
+                </section>
+              )}
+
+              {activeTab === 'crm' && (
+                <section id="crm">
+                  <CRMPipeline />
+                </section>
+              )}
+
+              {activeTab === 'memos' && (
+                <section id="memos">
+                  <InvestmentMemoViewer />
+                </section>
+              )}
+
               {activeTab === 'analysis' && (
                 <section id="analysis">
                   <BusinessAnalysisPanel selectedBusiness={selectedDeal} />

@@ -1,1 +1,210 @@
-{"path":"public/consolidated_manus_data.json","content":"{\n  "consolidated_at": "2025-07-24T00:00:00Z",\n  "data_sources": {\n    "workflow_runs": [\n      "AI Strategy High-Value Acquisitions",\n      "AI-Driven Acquisition Strategy - A",\n      "AI-Driven Business Acquisition Strategy and Daily Workflow",\n      "project_million_deliverable_20250622_110503"\n    ]\n  },\n  "business_opportunities": {\n    "scored_businesses": [\n      {\n        "id": "2340475",\n        "title": "Behavioral Health Company | Fast Growing & Built to Scale | $1.64M SDE",\n        "url": "https://www.bizbuysell.com/business-opportunity/behavioral-health-company-fast-growing-and-built-to-scale-1-64m-sde/2340475/",\n        "location": "Virginia",\n        "asking_price": 7400000.0,\n        "cash_flow": 1640000.0,\n        "description": "Fast-growing Virginia-based behavioral health company - premier outpatient substance abuse treatment provider",\n        "source": "bizbuysell",\n        "scraped_at": "2025-07-14T10:12:53.862184",\n        "score": 0.0,\n        "sector": "healthcare"\n      },\n      {\n        "id": "zwh5sy",\n        "title": "Commercial & Residential Electrical Contractor",\n        "location": "Mid-Atlantic, U.S.",\n        "asking_price": 10357476.0,\n        "cash_flow": 1048300,\n        "revenue": 8631230,\n        "ebitda_margin": 12.14,\n        "revenue_cagr_2021_2024": 35.7,\n        "score": 87,\n        "recommendation": "STRONG BUY - High Priority",\n        "sector": "electrical_contracting",\n        "services": [\n          "New construction electrical",\n          "Fire alarm installation",\n          "Electric panel upgrades",\n          "Design-build",\n          "Preventative maintenance",\n          "EV station installation and repair"\n        ],\n        "ai_optimization": {\n          "optimized_revenue": 9930230.115,\n          "optimized_ebitda": 3736928.14,\n          "ebitda_improvement_percentage": 256.48,\n          "roi_on_asking_price": 25.96,\n          "payback_period_years": 3.85\n        }\n      },\n      {\n        "id": "telecom_wisconsin",\n        "title": "Telecommunications Equipment Supplier",\n        "location": "Wisconsin",\n        "asking_price": 850000,\n        "annual_sales": 1669498,\n        "cash_flow": 261425,\n        "industry": "Telecommunications/Business Services",\n        "years_operating": 50,\n        "score": 67,\n        "recommendation": "CONSIDER - Low Priority",\n        "sector": "telecommunications",\n        "ai_optimization": {\n          "annual_benefit": 254598.45,\n          "enhanced_cash_flow": 516023.45,\n          "five_year_roi": 303.54,\n          "payback_years": 1.65\n        }\n      }\n    ],\n    "opportunities_pipeline": [\n      {\n        "id": "O000001",\n        "business_name": "Atlanta Metro Waste Services",\n        "asking_price": 2800000,\n        "cash_flow": 850000,\n        "revenue": 3200000,\n        "location": "Atlanta, GA",\n        "sector": "waste_management",\n        "source": "bizbuysell",\n        "score": 0.785,\n        "stage": "identified",\n        "probability": 25,\n        "status": "active",\n        "notes": "Route-based business with government contracts"\n      },\n      {\n        "id": "O000002",\n        "business_name": "Johnson Waste Management",\n        "asking_price": 1950000,\n        "cash_flow": 580000,\n        "revenue": 2100000,\n        "location": "Marietta, GA",\n        "sector": "waste_management",\n        "source": "direct_outreach",\n        "score": 0.692,\n        "stage": "identified",\n        "probability": 15,\n        "status": "active",\n        "notes": "Family business, owner considering succession planning"\n      }\n    ]\n  },\n  "crm_data": {\n    "contacts": [\n      {\n        "id": "C000001",\n        "type": "broker",\n        "name": "John Smith",\n        "email": "john.smith@bizbroker.com",\n        "phone": "(404) 555-0123",\n        "company": "Atlanta Business Brokers",\n        "title": "Senior Broker",\n        "location": "Atlanta, GA",\n        "source": "bizbuysell",\n        "status": "new",\n        "priority": "high",\n        "specialization": "waste management and logistics businesses",\n        "last_contact": "2025-07-14",\n        "next_follow_up": "2025-07-17"\n      },\n      {\n        "id": "C000002",\n        "type": "seller",\n        "name": "Sarah Johnson",\n        "email": "sarah@wastemanagementco.com",\n        "phone": "(770) 555-0456",\n        "business_name": "Johnson Waste Management",\n        "business_type": "waste_management",\n        "location": "Marietta, GA",\n        "source": "direct_outreach",\n        "status": "new",\n        "priority": "high",\n        "notes": "Owner considering retirement in 2-3 years",\n        "last_contact": "2025-07-14",\n        "next_follow_up": "2025-07-21"\n      },\n      {\n        "id": "C000003",\n        "type": "broker",\n        "name": "Mike Davis",\n        "email": "mdavis@flbusinesssales.com",\n        "phone": "(305) 555-0789",\n        "company": "Florida Business Sales",\n        "title": "Principal Broker",\n        "location": "Miami, FL",\n        "source": "loopnet",\n        "status": "new",\n        "priority": "medium"\n      }\n    ]\n  },\n  "financial_models": {\n    "behavioral_health_2340475": {\n      "projections": [\r      {\n        "year": 2025,\n        "revenue": 11100000.0,\n        "ebitda": 1968000.0,\n        "cash_flow": 1640000.0,\n        "capex": 333000.0,\n        "free_cash_flow": 1307000.0,\n        "ai_multiplier": 1.0\n      },\n      {\n        "year": 2026,\n        "revenue": 12392595.0,\n        "ebitda": 2364552.0,\n        "cash_flow": 1970460.0,\n        "capex": 371777.85,\n        "free_cash_flow": 1598682.15,\n        "ai_multiplier": 1.1125\n      },\n      {\n        "year": 2027,\n        "revenue": 13602483.9,\n        "ebitda": 2682836.64,\n        "cash_flow": 2235697.2,\n        "capex": 408074.517,\n        "free_cash_flow": 1827622.68,\n        "ai_multiplier": 1.16875\n      }\n    ]\n  }\n},\n"market_intelligence": {\n  "sectors_analyzed": [\n    "waste_management",\n    "electrical_contracting",\n    "telecommunications",\n    "healthcare/behavioral_health",\n    "hvac",\n    "logistics"\n  ],\n  "geographic_focus": [\n    "Georgia",\n    "Virginia",\n    "Mid-Atlantic",\n    "Southeast U.S.",\n    "Wisconsin",\n    "Florida",\n    "North Carolina",\n    "Texas"\n  ]\n}}"}
+{
+  "consolidated_at": "2025-07-24T00:00:00Z",
+  "data_sources": {
+    "workflow_runs": [
+      "AI Strategy High-Value Acquisitions",
+      "AI-Driven Acquisition Strategy - A", 
+      "AI-Driven Business Acquisition Strategy and Daily Workflow",
+      "project_million_deliverable_20250622_110503"
+    ]
+  },
+  "business_opportunities": {
+    "scored_businesses": [
+      {
+        "id": "2340475",
+        "title": "Behavioral Health Company | Fast Growing & Built to Scale | $1.64M SDE",
+        "url": "https://www.bizbuysell.com/business-opportunity/behavioral-health-company-fast-growing-and-built-to-scale-1-64m-sde/2340475/",
+        "location": "Virginia",
+        "asking_price": 7400000.0,
+        "cash_flow": 1640000.0,
+        "description": "Fast-growing Virginia-based behavioral health company - premier outpatient substance abuse treatment provider",
+        "source": "bizbuysell",
+        "scraped_at": "2025-07-14T10:12:53.862184",
+        "score": 0.0,
+        "sector": "healthcare"
+      },
+      {
+        "id": "zwh5sy",
+        "title": "Commercial & Residential Electrical Contractor",
+        "location": "Mid-Atlantic, U.S.",
+        "asking_price": 10357476.0,
+        "cash_flow": 1048300,
+        "revenue": 8631230,
+        "ebitda_margin": 12.14,
+        "revenue_cagr_2021_2024": 35.7,
+        "score": 87,
+        "recommendation": "STRONG BUY - High Priority",
+        "sector": "electrical_contracting",
+        "services": [
+          "New construction electrical",
+          "Fire alarm installation", 
+          "Electric panel upgrades",
+          "Design-build",
+          "Preventative maintenance",
+          "EV station installation and repair"
+        ],
+        "ai_optimization": {
+          "optimized_revenue": 9930230.115,
+          "optimized_ebitda": 3736928.14,
+          "ebitda_improvement_percentage": 256.48,
+          "roi_on_asking_price": 25.96,
+          "payback_period_years": 3.85
+        }
+      },
+      {
+        "id": "telecom_wisconsin",
+        "title": "Telecommunications Equipment Supplier",
+        "location": "Wisconsin", 
+        "asking_price": 850000,
+        "annual_sales": 1669498,
+        "cash_flow": 261425,
+        "industry": "Telecommunications/Business Services",
+        "years_operating": 50,
+        "score": 67,
+        "recommendation": "CONSIDER - Low Priority",
+        "sector": "telecommunications",
+        "ai_optimization": {
+          "annual_benefit": 254598.45,
+          "enhanced_cash_flow": 516023.45,
+          "five_year_roi": 303.54,
+          "payback_years": 1.65
+        }
+      }
+    ],
+    "opportunities_pipeline": [
+      {
+        "id": "O000001",
+        "business_name": "Atlanta Metro Waste Services",
+        "asking_price": 2800000,
+        "cash_flow": 850000,
+        "revenue": 3200000,
+        "location": "Atlanta, GA",
+        "sector": "waste_management",
+        "source": "bizbuysell",
+        "score": 0.785,
+        "stage": "identified",
+        "probability": 25,
+        "status": "active",
+        "notes": "Route-based business with government contracts"
+      },
+      {
+        "id": "O000002", 
+        "business_name": "Johnson Waste Management",
+        "asking_price": 1950000,
+        "cash_flow": 580000,
+        "revenue": 2100000,
+        "location": "Marietta, GA",
+        "sector": "waste_management", 
+        "source": "direct_outreach",
+        "score": 0.692,
+        "stage": "identified",
+        "probability": 15,
+        "status": "active",
+        "notes": "Family business, owner considering succession planning"
+      }
+    ]
+  },
+  "crm_data": {
+    "contacts": [
+      {
+        "id": "C000001",
+        "type": "broker",
+        "name": "John Smith",
+        "email": "john.smith@bizbroker.com",
+        "phone": "(404) 555-0123",
+        "company": "Atlanta Business Brokers",
+        "title": "Senior Broker",
+        "location": "Atlanta, GA",
+        "source": "bizbuysell",
+        "status": "new",
+        "priority": "high",
+        "specialization": "waste management and logistics businesses",
+        "last_contact": "2025-07-14",
+        "next_follow_up": "2025-07-17"
+      },
+      {
+        "id": "C000002",
+        "type": "seller", 
+        "name": "Sarah Johnson",
+        "email": "sarah@wastemanagementco.com",
+        "phone": "(770) 555-0456",
+        "business_name": "Johnson Waste Management",
+        "business_type": "waste_management",
+        "location": "Marietta, GA",
+        "source": "direct_outreach",
+        "status": "new",
+        "priority": "high",
+        "notes": "Owner considering retirement in 2-3 years",
+        "last_contact": "2025-07-14",
+        "next_follow_up": "2025-07-21"
+      },
+      {
+        "id": "C000003",
+        "type": "broker",
+        "name": "Mike Davis", 
+        "email": "mdavis@flbusinesssales.com",
+        "phone": "(305) 555-0789",
+        "company": "Florida Business Sales",
+        "title": "Principal Broker",
+        "location": "Miami, FL",
+        "source": "loopnet",
+        "status": "new",
+        "priority": "medium",
+        "specialization": "HVAC and facilities management sectors"
+      }
+    ]
+  },
+  "financial_models": {
+    "behavioral_health_2340475": {
+      "projections": [
+        {
+          "year": 2025,
+          "revenue": 11100000.0,
+          "ebitda": 1968000.0,
+          "cash_flow": 1640000.0,
+          "capex": 333000.0,
+          "free_cash_flow": 1307000.0,
+          "ai_multiplier": 1.0
+        },
+        {
+          "year": 2026,
+          "revenue": 12392595.0,
+          "ebitda": 2364552.0, 
+          "cash_flow": 1970460.0,
+          "capex": 371777.85,
+          "free_cash_flow": 1598682.15,
+          "ai_multiplier": 1.1125
+        },
+        {
+          "year": 2027,
+          "revenue": 13602483.9,
+          "ebitda": 2682836.64,
+          "cash_flow": 2235697.2,
+          "capex": 408074.517,
+          "free_cash_flow": 1827622.68,
+          "ai_multiplier": 1.16875
+        }
+      ]
+    }
+  },
+  "market_intelligence": {
+    "sectors_analyzed": [
+      "waste_management",
+      "electrical_contracting", 
+      "telecommunications",
+      "healthcare/behavioral_health",
+      "hvac",
+      "logistics"
+    ],
+    "geographic_focus": [
+      "Georgia",
+      "Virginia", 
+      "Mid-Atlantic",
+      "Southeast U.S.",
+      "Wisconsin",
+      "Florida",
+      "North Carolina",
+      "Texas"
+    ]
+  }
+}
