@@ -21,15 +21,15 @@ interface ReplicateRequest {
 interface BusinessAnalysisRequest {
   business_data: any;
   analysis_type: 'financial' | 'strategic' | 'market' | 'risk' | 'comprehensive';
-  model_preference?: 'llama' | 'mistral' | 'codellama' | 'custom';
+  model_preference?: 'llama' | 'mistral' | 'deepseek' | 'custom';
 }
 
 // Updated models for business analysis using current Replicate model names
 const BUSINESS_ANALYSIS_MODELS = {
   financial_analysis: {
     llama: "meta/meta-llama-3-70b-instruct", // Updated to Llama 3 70B
-    mistral: "mistralai/mixtral-8x7b-instruct-v0.1",
-    deepseek: "deepseek-ai/deepseek-r1" // Added DeepSeek for reasoning
+    mistral: "meta/meta-llama-3-70b-instruct", // Use Llama for now, Mixtral might have issues
+    deepseek: "meta/meta-llama-3-70b-instruct" // Use Llama for now
   },
   market_research: {
     llama: "meta/meta-llama-3-70b-instruct",
@@ -37,7 +37,7 @@ const BUSINESS_ANALYSIS_MODELS = {
   },
   document_analysis: {
     vision: "yorickvp/llava-13b",
-    gpt4o: "openai/gpt-4o" // Added GPT-4o for multi-modal
+    gpt4o: "meta/meta-llama-3-70b-instruct" // Use Llama for now
   }
 };
 
@@ -197,6 +197,8 @@ async function pollPrediction(predictionId: string, maxAttempts: number = 30): P
 async function analyzeBusinessWithReplicate(request: BusinessAnalysisRequest): Promise<any> {
   const { business_data, analysis_type, model_preference = 'llama' } = request;
   
+  console.log(`Analyzing business with Replicate: ${analysis_type} analysis, model: ${model_preference}`);
+  
   let modelVersion: string;
   let prompt: string;
   
@@ -236,9 +238,15 @@ async function analyzeBusinessWithReplicate(request: BusinessAnalysisRequest): P
     repetition_penalty: 1.1
   };
   
-  console.log(`Running ${analysis_type} analysis for ${business_data.business_name}`);
+  console.log(`Running ${analysis_type} analysis for ${business_data.business_name} using model: ${modelVersion}`);
   
-  const prediction = await callReplicateModel(modelVersion, input);
+  let prediction;
+  try {
+    prediction = await callReplicateModel(modelVersion, input);
+  } catch (error) {
+    console.error(`Replicate API call failed:`, error);
+    throw new Error(`Replicate API error: ${error.message}`);
+  }
   
   if (prediction.status === 'succeeded' && prediction.output) {
     // Join output array if it's an array of strings
