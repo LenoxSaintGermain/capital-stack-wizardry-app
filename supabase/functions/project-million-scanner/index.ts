@@ -167,6 +167,7 @@ Analyze and provide JSON response with:
     const data = await response.json();
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid OpenAI response structure:', data);
       throw new Error('Invalid OpenAI response structure');
     }
     
@@ -174,6 +175,7 @@ Analyze and provide JSON response with:
     const parsedContent = cleanAndParseJSON(content);
     
     if (!parsedContent) {
+      console.error('Failed to parse OpenAI response as JSON:', content);
       throw new Error('Failed to parse AI response as JSON');
     }
     
@@ -241,7 +243,21 @@ Provide comprehensive strategic analysis in JSON:
     });
 
     const data = await response.json();
-    return JSON.parse(data.content[0].text);
+    
+    if (!data.content || !data.content[0] || !data.content[0].text) {
+      console.error('Invalid Claude response structure:', data);
+      throw new Error('Invalid Claude response structure');
+    }
+    
+    const content = data.content[0].text;
+    const parsedContent = cleanAndParseJSON(content);
+    
+    if (!parsedContent) {
+      console.error('Failed to parse Claude response as JSON:', content);
+      throw new Error('Failed to parse Claude response as JSON');
+    }
+    
+    return parsedContent;
   } catch (error) {
     console.error('Strategic analysis failed:', error);
     return generateFallbackStrategicAnalysis(business);
@@ -298,7 +314,21 @@ Analyze market conditions and provide JSON response:
     });
 
     const data = await response.json();
-    return JSON.parse(data.candidates[0].content.parts[0].text);
+    
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+      console.error('Invalid Gemini response structure:', data);
+      throw new Error('Invalid Gemini response structure');
+    }
+    
+    const content = data.candidates[0].content.parts[0].text;
+    const parsedContent = cleanAndParseJSON(content);
+    
+    if (!parsedContent) {
+      console.error('Failed to parse Gemini response as JSON:', content);
+      throw new Error('Failed to parse Gemini response as JSON');
+    }
+    
+    return parsedContent;
   } catch (error) {
     console.error('Market analysis failed:', error);
     return generateFallbackMarketAnalysis(business);
@@ -350,7 +380,21 @@ Provide comprehensive risk analysis in JSON:
     });
 
     const data = await response.json();
-    return JSON.parse(data.choices[0].message.content);
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid Perplexity response structure:', data);
+      throw new Error('Invalid Perplexity response structure');
+    }
+    
+    const content = data.choices[0].message.content;
+    const parsedContent = cleanAndParseJSON(content);
+    
+    if (!parsedContent) {
+      console.error('Failed to parse Perplexity response as JSON:', content);
+      throw new Error('Failed to parse Perplexity response as JSON');
+    }
+    
+    return parsedContent;
   } catch (error) {
     console.error('Risk analysis failed:', error);
     return generateFallbackRiskAnalysis(business);
@@ -396,6 +440,12 @@ Write in professional investment memo style.`;
     });
 
     const data = await response.json();
+    
+    if (!data.content || !data.content[0] || !data.content[0].text) {
+      console.error('Invalid Claude response for investment thesis:', data);
+      return `Investment opportunity in ${business.business_name} - ${business.sector} sector business with strong fundamentals.`;
+    }
+    
     return data.content[0].text;
   } catch (error) {
     console.error('Investment thesis generation failed:', error);
@@ -446,6 +496,12 @@ Use professional, investor-ready language.`;
     });
 
     const data = await response.json();
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid OpenAI response for executive summary:', data);
+      return `Executive Summary: ${business.business_name} represents a compelling acquisition opportunity in the ${business.sector} sector.`;
+    }
+    
     return data.choices[0].message.content;
   } catch (error) {
     console.error('Executive summary generation failed:', error);
@@ -747,9 +803,47 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Handle GET requests for analysis_runs queries
+  if (req.method === 'GET') {
+    try {
+      const { data: runs, error } = await supabase
+        .from('analysis_runs')
+        .select('*')
+        .order('started_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        throw error;
+      }
+
+      return new Response(JSON.stringify({ success: true, data: runs }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } catch (error) {
+      console.error('Error fetching analysis runs:', error);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: error.message 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+  }
+
   try {
     const { action } = await req.json();
     console.log('Received action:', action);
+
+    if (action === 'test_connection') {
+      return new Response(JSON.stringify({ 
+        success: true, 
+        message: 'Project Million Scanner connection successful',
+        timestamp: new Date().toISOString()
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     if (action === 'start_scan') {
       // Create new analysis run
