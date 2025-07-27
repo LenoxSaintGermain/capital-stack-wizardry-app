@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText, GitBranch, Home, Users, Layers, Plane, PieChart, UserCheck, FileText } from 'lucide-react';
+import { DollarSign, BarChart, HardHat, Target, Building, Clipboard, ScrollText, GitBranch, Home, Users, Layers, Plane, PieChart, UserCheck, FileText, Bot } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import InvestorPartnership from "@/components/InvestorPartnership";
 import PortfolioOverview from "@/components/PortfolioOverview";
 import CRMPipeline from "@/components/CRMPipeline";
 import InvestmentMemoViewer from "@/components/InvestmentMemoViewer";
+import AgentControlPanel from "@/components/AgentControlPanel";
 
 interface Business {
   id: string;
@@ -46,6 +47,7 @@ const Index = () => {
   const tabItems = [
     { id: 'portfolio', label: 'Portfolio Overview', icon: PieChart },
     { id: 'crm', label: 'CRM Pipeline', icon: UserCheck },
+    { id: 'agent', label: 'AI Research Agent', icon: Bot },
     { id: 'memos', label: 'Investment Memos', icon: FileText },
     { id: 'analysis', label: 'Deal Analysis', icon: BarChart },
     { id: 'capital', label: 'Capital Stack', icon: DollarSign },
@@ -152,6 +154,12 @@ const Index = () => {
               {activeTab === 'crm' && (
                 <section id="crm">
                   <CRMPipeline />
+                </section>
+              )}
+
+              {activeTab === 'agent' && (
+                <section id="agent">
+                  <AgentControlPanel />
                 </section>
               )}
 
