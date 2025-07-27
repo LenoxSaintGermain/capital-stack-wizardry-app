@@ -21,7 +21,7 @@ import {
 import { ReplicateBusinessAnalyzer } from '@/utils/replicateAnalyzer';
 
 interface TestResult {
-  source: 'existing' | 'enhanced';
+  source: 'existing' | 'enhanced' | 'simple';
   success: boolean;
   data?: any;
   error?: string;
@@ -33,6 +33,7 @@ export default function ReplicateTestPanel() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [isTestingExisting, setIsTestingExisting] = useState(false);
   const [isTestingEnhanced, setIsTestingEnhanced] = useState(false);
+  const [isTestingSimple, setIsTestingSimple] = useState(false);
   const [customInput, setCustomInput] = useState('');
   const { toast } = useToast();
 
@@ -217,6 +218,68 @@ Provide a concise analysis focusing on financial health, growth potential, and i
     }
   };
 
+  const testSimpleReplicate = async () => {
+    setIsTestingSimple(true);
+    const startTime = Date.now();
+
+    try {
+      console.log('Testing simple Replicate call...');
+      
+      const { data, error } = await supabase.functions.invoke('replicate-api', {
+        body: {
+          modelVersion: "meta/meta-llama-3-70b-instruct",
+          input: {
+            prompt: "What is 2+2? Provide a brief answer.",
+            max_new_tokens: 100,
+            temperature: 0.1
+          }
+        }
+      });
+
+      const executionTime = Date.now() - startTime;
+
+      if (error) {
+        throw error;
+      }
+
+      const result: TestResult = {
+        source: 'simple',
+        success: true,
+        data: data,
+        executionTime,
+        timestamp: new Date().toISOString()
+      };
+
+      setTestResults(prev => [result, ...prev]);
+      
+      toast({
+        title: "Simple Test Complete",
+        description: `Basic API call completed in ${(executionTime / 1000).toFixed(1)}s`,
+      });
+
+    } catch (error: any) {
+      console.error('Simple test failed:', error);
+      
+      const result: TestResult = {
+        source: 'simple',
+        success: false,
+        error: error.message,
+        executionTime: Date.now() - startTime,
+        timestamp: new Date().toISOString()
+      };
+
+      setTestResults(prev => [result, ...prev]);
+      
+      toast({
+        title: "Simple Test Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsTestingSimple(false);
+    }
+  };
+
   const testCustomPrompt = async () => {
     if (!customInput.trim()) {
       toast({
@@ -289,12 +352,42 @@ Provide a concise analysis focusing on financial health, growth potential, and i
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="comparison" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="comparison">Comparison Tests</TabsTrigger>
-              <TabsTrigger value="specific">Specific Analysis</TabsTrigger>
-              <TabsTrigger value="custom">Custom Prompt</TabsTrigger>
+          <Tabs defaultValue="simple" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="simple">Simple Test</TabsTrigger>
+              <TabsTrigger value="comparison">Comparison</TabsTrigger>
+              <TabsTrigger value="specific">Analysis</TabsTrigger>
+              <TabsTrigger value="custom">Custom</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="simple" className="space-y-4">
+              <Card className="p-4">
+                <h4 className="font-medium mb-3 flex items-center gap-2">
+                  <TestTube className="h-4 w-4 text-green-600" />
+                  Simple Replicate Test
+                </h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Test basic Replicate API connectivity with a simple math question. This bypasses complex analysis logic to isolate infrastructure issues.
+                </p>
+                <Button 
+                  onClick={testSimpleReplicate}
+                  disabled={isTestingSimple}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  {isTestingSimple ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Testing Basic API...
+                    </>
+                  ) : (
+                    <>
+                      <TestTube className="w-4 h-4 mr-2" />
+                      Test Simple Replicate Call
+                    </>
+                  )}
+                </Button>
+              </Card>
+            </TabsContent>
 
             <TabsContent value="comparison" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -444,9 +537,14 @@ Provide a concise analysis focusing on financial health, growth potential, and i
                     <div className="flex items-center gap-3">
                       <Badge 
                         variant="outline" 
-                        className={result.source === 'existing' ? 'border-blue-500 text-blue-700' : 'border-purple-500 text-purple-700'}
+                        className={
+                          result.source === 'existing' ? 'border-blue-500 text-blue-700' : 
+                          result.source === 'enhanced' ? 'border-purple-500 text-purple-700' :
+                          'border-green-500 text-green-700'
+                        }
                       >
-                        {result.source === 'existing' ? 'Existing Function' : 'Enhanced Analyzer'}
+                        {result.source === 'existing' ? 'Existing Function' : 
+                         result.source === 'enhanced' ? 'Enhanced Analyzer' : 'Simple Test'}
                       </Badge>
                       <div className="flex items-center gap-2">
                         {result.success ? (

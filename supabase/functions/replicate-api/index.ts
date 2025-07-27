@@ -24,20 +24,20 @@ interface BusinessAnalysisRequest {
   model_preference?: 'llama' | 'mistral' | 'deepseek' | 'custom';
 }
 
-// Updated models for business analysis using current Replicate model names
+// Updated models for business analysis using reliable Replicate model names
 const BUSINESS_ANALYSIS_MODELS = {
   financial_analysis: {
-    llama: "meta/meta-llama-3-70b-instruct", // Updated to Llama 3 70B
-    mistral: "meta/meta-llama-3-70b-instruct", // Use Llama for now, Mixtral might have issues
-    deepseek: "meta/meta-llama-3-70b-instruct" // Use Llama for now
+    llama: "meta/meta-llama-3-70b-instruct",
+    mistral: "meta/meta-llama-3-70b-instruct", 
+    deepseek: "meta/meta-llama-3-70b-instruct"
   },
   market_research: {
     llama: "meta/meta-llama-3-70b-instruct",
-    flan: "replicate/flan-t5-xl"
+    flan: "meta/meta-llama-3-70b-instruct" // Use Llama for consistency
   },
   document_analysis: {
-    vision: "yorickvp/llava-13b",
-    gpt4o: "meta/meta-llama-3-70b-instruct" // Use Llama for now
+    vision: "meta/meta-llama-3-70b-instruct", // Use Llama for now
+    gpt4o: "meta/meta-llama-3-70b-instruct"
   }
 };
 
@@ -142,20 +142,28 @@ async function callReplicateModel(modelVersion: string, input: any): Promise<any
 
   console.log(`Calling Replicate model: ${modelVersion}`);
 
+  let requestBody;
+  try {
+    requestBody = JSON.stringify({
+      version: modelVersion,
+      input: input
+    });
+  } catch (error) {
+    throw new Error(`Failed to serialize request body: ${error.message}`);
+  }
+
   const response = await fetch('https://api.replicate.com/v1/predictions', {
     method: 'POST',
     headers: {
       'Authorization': `Token ${replicateToken}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      version: modelVersion,
-      input: input
-    }),
+    body: requestBody,
   });
 
   if (!response.ok) {
     const errorText = await response.text();
+    console.error(`Replicate API error: ${response.status}`, errorText);
     throw new Error(`Replicate API error: ${response.status} ${errorText}`);
   }
 
@@ -279,8 +287,13 @@ serve(async (req) => {
   }
 
   try {
-    const requestBody = await req.json();
-    console.log('Received request:', { ...requestBody, input: '[REDACTED]' });
+    let requestBody;
+    try {
+      requestBody = await req.json();
+      console.log('Received request type:', requestBody.business_data ? 'business_analysis' : 'direct_api');
+    } catch (error) {
+      throw new Error(`Invalid JSON in request body: ${error.message}`);
+    }
 
     // Check if this is a business analysis request
     if (requestBody.business_data && requestBody.analysis_type) {
