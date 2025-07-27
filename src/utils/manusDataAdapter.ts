@@ -6,6 +6,7 @@ type Business = Database['public']['Tables']['businesses']['Insert'];
 interface ManusOpportunity {
   id: string;
   title: string;
+  business_name?: string;
   location?: string;
   asking_price: number;
   cash_flow?: number;
@@ -60,7 +61,7 @@ interface ManusConsolidatedData {
 export class ManusDataAdapter {
   static transformOpportunityToBusiness(opportunity: ManusOpportunity): Partial<Business> {
     return {
-      business_name: opportunity.title,
+      business_name: opportunity.business_name || opportunity.title,
       sector: opportunity.sector,
       location: opportunity.location || '',
       asking_price: opportunity.asking_price,
@@ -71,12 +72,8 @@ export class ManusDataAdapter {
       strategic_flags: [opportunity.recommendation || 'Under Review'],
       resilience_factors: opportunity.services || [],
       source: opportunity.source || 'manus_ai',
-      last_updated: new Date().toISOString(),
       // Map additional fields
-      business_description: opportunity.description || '',
-      financial_health_score: this.calculateFinancialHealth(opportunity),
-      market_position_score: this.calculateMarketPosition(opportunity),
-      growth_potential_score: this.calculateGrowthPotential(opportunity),
+      description: opportunity.description || '',
     };
   }
 
