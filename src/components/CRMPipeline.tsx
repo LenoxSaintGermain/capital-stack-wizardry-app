@@ -77,7 +77,12 @@ export default function CRMPipeline() {
       setLoading(true);
       const manusData = await loadManusConsolidatedData();
       setContacts(manusData.crm_data.contacts || []);
-      setOpportunities(manusData.business_opportunities.opportunities_pipeline || []);
+      // Transform opportunities to match interface
+      const transformedOpportunities = (manusData.business_opportunities.opportunities_pipeline || []).map(opp => ({
+        ...opp,
+        business_name: opp.business_name || opp.title || 'Unnamed Business'
+      }));
+      setOpportunities(transformedOpportunities);
     } catch (error) {
       console.error('Error loading CRM data:', error);
     } finally {

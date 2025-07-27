@@ -70,7 +70,7 @@ export class ManusDataAdapter {
       automation_opportunity_score: opportunity.ai_optimization?.roi_on_asking_price || 0,
       strategic_flags: [opportunity.recommendation || 'Under Review'],
       resilience_factors: opportunity.services || [],
-      data_source: opportunity.source || 'manus_ai',
+      source: opportunity.source || 'manus_ai',
       last_updated: new Date().toISOString(),
       // Map additional fields
       business_description: opportunity.description || '',

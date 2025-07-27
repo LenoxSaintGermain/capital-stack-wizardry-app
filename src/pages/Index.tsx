@@ -18,6 +18,7 @@ import PortfolioOverview from "@/components/PortfolioOverview";
 import CRMPipeline from "@/components/CRMPipeline";
 import InvestmentMemoViewer from "@/components/InvestmentMemoViewer";
 import AgentControlPanel from "@/components/AgentControlPanel";
+import AgentDebugPanel from "@/components/AgentDebugPanel";
 
 interface Business {
   id: string;
@@ -158,8 +159,9 @@ const Index = () => {
               )}
 
               {activeTab === 'agent' && (
-                <section id="agent">
+                <section id="agent" className="space-y-6">
                   <AgentControlPanel />
+                  <AgentDebugPanel />
                 </section>
               )}
 

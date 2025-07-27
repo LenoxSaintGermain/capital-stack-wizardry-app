@@ -76,8 +76,8 @@ async function performComprehensiveAnalysis(business: BusinessData): Promise<Com
   const payback_years = business.asking_price / business.annual_net_profit;
   
   return {
-    automation_opportunity_score: financialAnalysis.automation_score || 0.7,
-    composite_score: calculateCompositeScore(financialAnalysis, strategicAnalysis, marketAnalysis, riskAnalysis),
+    automation_opportunity_score: clampToDbPrecision(financialAnalysis.automation_score || 0.7),
+    composite_score: clampToDbPrecision(calculateCompositeScore(financialAnalysis, strategicAnalysis, marketAnalysis, riskAnalysis)),
     ownership_model: strategicAnalysis.recommended_ownership_model || 'semi-absentee',
     resilience_factors: riskAnalysis.resilience_factors || ['essential-service'],
     strategic_flags: strategicAnalysis.strategic_flags || ['platform_potential'],
@@ -92,6 +92,26 @@ async function performComprehensiveAnalysis(business: BusinessData): Promise<Com
     investment_thesis: investmentThesis,
     executive_summary: executiveSummary
   };
+}
+
+// Helper function to clean and parse AI responses
+function cleanAndParseJSON(responseText: string) {
+  try {
+    // Remove markdown code blocks if present
+    let cleaned = responseText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+    // Remove any leading/trailing whitespace
+    cleaned = cleaned.trim();
+    // Try to parse the JSON
+    return JSON.parse(cleaned);
+  } catch (error) {
+    console.error('JSON parsing error:', error, 'Response:', responseText);
+    return null;
+  }
+}
+
+// Helper function to clamp values to database precision
+function clampToDbPrecision(value: number, maxValue: number = 9.9999): number {
+  return Math.min(Math.max(0, value), maxValue);
 }
 
 // OpenAI - Financial Analysis
@@ -145,7 +165,27 @@ Analyze and provide JSON response with:
     });
 
     const data = await response.json();
-    return JSON.parse(data.choices[0].message.content);
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid OpenAI response structure');
+    }
+    
+    const content = data.choices[0].message.content;
+    const parsedContent = cleanAndParseJSON(content);
+    
+    if (!parsedContent) {
+      throw new Error('Failed to parse AI response as JSON');
+    }
+    
+    // Clamp numeric values to database precision
+    if (parsedContent.financial_health_score) {
+      parsedContent.financial_health_score = clampToDbPrecision(parsedContent.financial_health_score);
+    }
+    if (parsedContent.automation_score) {
+      parsedContent.automation_score = clampToDbPrecision(parsedContent.automation_score);
+    }
+    
+    return parsedContent;
   } catch (error) {
     console.error('Financial analysis failed:', error);
     return generateFallbackFinancialAnalysis(business);
