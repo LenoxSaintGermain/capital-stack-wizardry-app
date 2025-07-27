@@ -110,8 +110,13 @@ function cleanAndParseJSON(responseText: string) {
 }
 
 // Helper function to clamp values to database precision
-function clampToDbPrecision(value: number, maxValue: number = 9.9999): number {
-  return Math.min(Math.max(0, value), maxValue);
+function clampToDbPrecision(value: number, maxValue: number = 9.999): number {
+  if (typeof value !== 'number' || isNaN(value)) {
+    console.warn(`Invalid numeric value: ${value}, using 0 instead`);
+    return 0;
+  }
+  const clamped = Math.min(Math.max(0, value), maxValue);
+  return Number(clamped.toFixed(3));
 }
 
 // OpenAI - Financial Analysis
@@ -634,79 +639,108 @@ async function discoverBusinesses(): Promise<BusinessData[]> {
 async function storeBusiness(business: BusinessData, analysis: ComprehensiveAnalysis) {
   console.log(`Storing enhanced business analysis: ${business.business_name}`);
   
-  // Check if business already exists
-  const { data: existing } = await supabase
-    .from('businesses')
-    .select('id')
-    .eq('business_name', business.business_name)
-    .eq('source', business.source)
-    .single();
-
-  const businessData = {
-    ...business,
-    automation_opportunity_score: analysis.automation_opportunity_score,
-    composite_score: analysis.composite_score,
-    ownership_model: analysis.ownership_model,
-    resilience_factors: analysis.resilience_factors,
-    strategic_flags: analysis.strategic_flags,
-    cap_rate: analysis.cap_rate,
-    payback_years: analysis.payback_years,
-    seller_financing: analysis.seller_financing,
-    government_contracts: analysis.government_contracts,
-    is_active: true,
-    last_analyzed_at: new Date().toISOString(),
-  };
-
-  let businessId: string;
-
-  if (existing) {
-    const { error } = await supabase
+  try {
+    // Check if business already exists - use maybeSingle() to avoid errors when no data found
+    const { data: existing, error: selectError } = await supabase
       .from('businesses')
-      .update(businessData)
-      .eq('id', existing.id);
-    
-    if (error) {
-      console.error('Error updating business:', error);
-      throw error;
-    }
-    businessId = existing.id;
-  } else {
-    const { data, error } = await supabase
-      .from('businesses')
-      .insert([businessData])
       .select('id')
-      .single();
-    
-    if (error) {
-      console.error('Error inserting business:', error);
-      throw error;
+      .eq('business_name', business.business_name)
+      .eq('source', business.source)
+      .maybeSingle();
+
+    if (selectError) {
+      console.error('Error checking existing business:', selectError);
+      throw selectError;
     }
-    businessId = data.id;
+
+    const businessData = {
+      business_name: business.business_name,
+      asking_price: Number(business.asking_price),
+      annual_revenue: Number(business.annual_revenue),
+      annual_net_profit: Number(business.annual_net_profit),
+      description: business.description || null,
+      url: business.url || null,
+      source: business.source,
+      sector: business.sector,
+      location: business.location,
+      automation_opportunity_score: clampToDbPrecision(analysis.automation_opportunity_score),
+      composite_score: clampToDbPrecision(analysis.composite_score),
+      ownership_model: analysis.ownership_model,
+      resilience_factors: analysis.resilience_factors || [],
+      strategic_flags: analysis.strategic_flags || [],
+      cap_rate: Number(analysis.cap_rate.toFixed(2)),
+      payback_years: Number(analysis.payback_years.toFixed(2)),
+      seller_financing: analysis.seller_financing,
+      government_contracts: analysis.government_contracts,
+      is_active: true,
+      last_analyzed_at: new Date().toISOString(),
+    };
+
+    let businessId: string;
+
+    if (existing) {
+      console.log(`Updating existing business: ${business.business_name}`);
+      const { error } = await supabase
+        .from('businesses')
+        .update(businessData)
+        .eq('id', existing.id);
+      
+      if (error) {
+        console.error('Error updating business:', error);
+        throw error;
+      }
+      businessId = existing.id;
+      console.log(`Successfully updated business: ${businessId}`);
+    } else {
+      console.log(`Inserting new business: ${business.business_name}`);
+      const { data, error } = await supabase
+        .from('businesses')
+        .insert([businessData])
+        .select('id')
+        .single();
+      
+      if (error) {
+        console.error('Error inserting business:', error);
+        console.error('Business data:', JSON.stringify(businessData, null, 2));
+        throw error;
+      }
+      businessId = data.id;
+      console.log(`Successfully inserted business: ${businessId}`);
+    }
+
+    // Store enrichment data
+    console.log(`Storing enrichment data for business: ${businessId}`);
+    const enrichmentData = {
+      business_id: businessId,
+      ai_summary: analysis.executive_summary || null,
+      market_analysis: analysis.market_analysis || {},
+      automation_assessment: analysis.financial_analysis || {},
+      financial_projections: {
+        investment_thesis: analysis.investment_thesis || '',
+        strategic_assessment: analysis.strategic_assessment || {}
+      },
+      risk_factors: analysis.risk_evaluation || {},
+      confidence_score: clampToDbPrecision(analysis.composite_score)
+    };
+
+    const { error: enrichmentError } = await supabase
+      .from('enrichment_data')
+      .upsert([enrichmentData], { onConflict: 'business_id' });
+
+    if (enrichmentError) {
+      console.error('Error storing enrichment data:', enrichmentError);
+      console.error('Enrichment data:', JSON.stringify(enrichmentData, null, 2));
+      // Don't throw here - business is already stored successfully
+    } else {
+      console.log(`Successfully stored enrichment data for business: ${businessId}`);
+    }
+
+    return { updated: !!existing, id: businessId };
+    
+  } catch (error) {
+    console.error(`Error in storeBusiness for ${business.business_name}:`, error);
+    throw error;
   }
-
-  // Store enrichment data
-  const enrichmentData = {
-    business_id: businessId,
-    ai_summary: analysis.executive_summary,
-    market_analysis: analysis.market_analysis,
-    automation_assessment: analysis.financial_analysis,
-    financial_projections: {
-      investment_thesis: analysis.investment_thesis,
-      strategic_assessment: analysis.strategic_assessment
-    },
-    risk_factors: analysis.risk_evaluation,
-    confidence_score: analysis.composite_score
-  };
-
-  const { error: enrichmentError } = await supabase
-    .from('enrichment_data')
-    .upsert([enrichmentData], { onConflict: 'business_id' });
-
-  if (enrichmentError) {
-    console.error('Error storing enrichment data:', enrichmentError);
-  }
-
-  return { updated: !!existing, id: businessId };
 }
 
 // Main scanning function
@@ -763,6 +797,12 @@ async function performScan(runId: string) {
 
       } catch (error) {
         console.error(`Error processing business ${business.business_name}:`, error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          business: business.business_name
+        });
+        // Continue processing other businesses even if one fails
       }
     }
 
