@@ -37,6 +37,8 @@ import {
   AreaChart
 } from 'recharts';
 import { ManusDataAdapter, loadManusConsolidatedData } from '@/utils/manusDataAdapter';
+import { importJsonToDatabase, getPortfolioStatsFromDatabase } from '@/utils/dataImporter';
+import { toast } from 'sonner';
 
 interface PortfolioStats {
   totalOpportunities: number;
@@ -67,6 +69,7 @@ export default function PortfolioOverview() {
   const [stats, setStats] = useState<PortfolioStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedTimeframe, setSelectedTimeframe] = useState('all');
+  const [importing, setImporting] = useState(false);
 
   useEffect(() => {
     loadPortfolioData();
@@ -75,13 +78,37 @@ export default function PortfolioOverview() {
   const loadPortfolioData = async () => {
     try {
       setLoading(true);
-      const manusData = await loadManusConsolidatedData();
-      const portfolioStats = ManusDataAdapter.generatePortfolioSummary(manusData);
+      
+      // First try to load from database
+      let portfolioStats = await getPortfolioStatsFromDatabase();
+      
+      // If no data in database, fall back to JSON
+      if (!portfolioStats) {
+        console.log('No database data found, using JSON fallback');
+        const manusData = await loadManusConsolidatedData();
+        portfolioStats = ManusDataAdapter.generatePortfolioSummary(manusData);
+      }
+      
       setStats(portfolioStats);
     } catch (error) {
       console.error('Error loading portfolio data:', error);
+      toast.error('Failed to load portfolio data');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImportData = async () => {
+    try {
+      setImporting(true);
+      await importJsonToDatabase();
+      toast.success('Successfully imported JSON data to database');
+      await loadPortfolioData(); // Refresh with database data
+    } catch (error) {
+      console.error('Import failed:', error);
+      toast.error('Failed to import data to database');
+    } finally {
+      setImporting(false);
     }
   };
 
@@ -159,13 +186,18 @@ export default function PortfolioOverview() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={handleImportData}
+            disabled={importing}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            {importing ? 'Importing...' : 'Import JSON Data'}
+          </Button>
           <Button variant="outline" size="sm">
             <Filter className="h-4 w-4 mr-2" />
             Filter
-          </Button>
-          <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export
           </Button>
           <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600">
             <Activity className="h-4 w-4 mr-2" />
