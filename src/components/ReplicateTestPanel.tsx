@@ -57,7 +57,7 @@ export default function ReplicateTestPanel() {
       // Test with a simple Llama 2 model call
       const { data, error } = await supabase.functions.invoke('replicate-api', {
         body: {
-          modelVersion: "meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
+          modelVersion: "meta/meta-llama-3-70b-instruct",
           input: {
             prompt: `Analyze this business opportunity and provide a brief assessment:
 
@@ -232,7 +232,7 @@ Provide a concise analysis focusing on financial health, growth potential, and i
     try {
       const { data, error } = await supabase.functions.invoke('replicate-api', {
         body: {
-          modelVersion: "meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
+          modelVersion: "meta/meta-llama-3-70b-instruct",
           input: {
             prompt: customInput,
             max_new_tokens: 1000,

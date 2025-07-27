@@ -228,7 +228,7 @@ Write a professional investment thesis (3-4 paragraphs) focusing on value creati
 
       const { data, error } = await supabase.functions.invoke('replicate-api', {
         body: {
-          modelVersion: "meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
+          modelVersion: "meta/meta-llama-3-70b-instruct",
           input: {
             prompt: prompt,
             max_new_tokens: 1000,
@@ -276,7 +276,7 @@ Write a concise executive summary (2-3 paragraphs) highlighting the key investme
 
       const { data, error } = await supabase.functions.invoke('replicate-api', {
         body: {
-          modelVersion: "meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
+          modelVersion: "meta/meta-llama-3-70b-instruct",
           input: {
             prompt: prompt,
             max_new_tokens: 800,

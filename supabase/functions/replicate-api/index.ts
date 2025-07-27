@@ -24,20 +24,20 @@ interface BusinessAnalysisRequest {
   model_preference?: 'llama' | 'mistral' | 'codellama' | 'custom';
 }
 
-// Predefined models for business analysis
+// Updated models for business analysis using current Replicate model names
 const BUSINESS_ANALYSIS_MODELS = {
   financial_analysis: {
-    llama: "meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
-    mistral: "mistralai/mixtral-8x7b-instruct-v0.1:cf18decbf51c27fed6bbdc3492312c1c903222a56e3fe9ca02d6cbe5198afc10",
-    codellama: "meta/codellama-34b-instruct:91a9d5a7d7f1d8b40fa7a9318d0b5a8b6b3e1c8a2b3d4e5f6a7b8c9d0e1f2a3b"
+    llama: "meta/meta-llama-3-70b-instruct", // Updated to Llama 3 70B
+    mistral: "mistralai/mixtral-8x7b-instruct-v0.1",
+    deepseek: "deepseek-ai/deepseek-r1" // Added DeepSeek for reasoning
   },
   market_research: {
-    llama: "meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3",
-    research: "replicate/flan-t5-xl:7a216605843d87f5426a10d2cc6940485a232336ed04d655ef86b91e020685e2"
+    llama: "meta/meta-llama-3-70b-instruct",
+    flan: "replicate/flan-t5-xl"
   },
   document_analysis: {
-    vision: "yorickvp/llava-13b:b5f6212d032508382d61ff00469ddda3e32fd8a0e75dc39d8a4191bb742157fb",
-    ocr: "abiruyt/text-extract-ocr:a524caeaa23495bc9edc2f1ab3d6b4e1c92c0851b903ae79b6cdac9b3b2de56"
+    vision: "yorickvp/llava-13b",
+    gpt4o: "openai/gpt-4o" // Added GPT-4o for multi-modal
   }
 };
 
