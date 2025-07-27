@@ -19,6 +19,7 @@ import CRMPipeline from "@/components/CRMPipeline";
 import InvestmentMemoViewer from "@/components/InvestmentMemoViewer";
 import AgentControlPanel from "@/components/AgentControlPanel";
 import AgentDebugPanel from "@/components/AgentDebugPanel";
+import ReplicateTestPanel from "@/components/ReplicateTestPanel";
 
 interface Business {
   id: string;
@@ -162,6 +163,7 @@ const Index = () => {
                 <section id="agent" className="space-y-6">
                   <AgentControlPanel />
                   <AgentDebugPanel />
+                  <ReplicateTestPanel />
                 </section>
               )}
 
