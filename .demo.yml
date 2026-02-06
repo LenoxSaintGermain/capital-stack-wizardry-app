@@ -6,4 +6,5 @@ category: fintech
 platform: lovable
 featured: false
 demo_video:
+cover_image: src/assets/cover-image.jpg
 cover_prompt: A sophisticated dark dashboard showing business acquisition analytics with glowing data visualizations, capital stack diagrams, and AI-powered deal scoring metrics
