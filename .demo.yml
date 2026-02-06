@@ -1,7 +1,7 @@
 # Demo Catalog metadata — parsed by sync agent
 title: Project Million
 pitch: AI-powered business acquisition intelligence platform for discovering, analyzing, and structuring small business deals
-status: draft
+status: ready_for_launch
 category: fintech
 platform: lovable
 featured: false
